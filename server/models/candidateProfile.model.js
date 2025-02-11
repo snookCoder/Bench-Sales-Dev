@@ -24,22 +24,26 @@ const candidateProfile = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Active", "Bench"],
+    enum: ["Active", "Inactive"],
   },
   resumeUpload: {
     type: String,
-    default: "testURL",
+    default: "",
   },
   createdAt: {
+    type:Number,
     default: () => Math.floor(Date.now() / 1000),
   },
   updatedAt: {
+    type:Number,
     default: () => Math.floor(Date.now() / 1000),
   },
 });
 
+
+
 candidateProfile.pre("save", function (next) {
-  this.updatedAt = Math.floor(Date, now() / 1000);
+  this.updatedAt = Math.floor(Date.now() / 1000);
   next();
 });
 

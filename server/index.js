@@ -5,6 +5,8 @@ import cors from "cors";
 import { candidateRoute } from "./routes/candidateProfile.route.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { uploadResume } from "./routes/uploadResume.js";
+import { candidateProfileModel } from "./models/candidateProfile.model.js";
 
 dotenv.config();
 
@@ -27,9 +29,17 @@ app.use(express.urlencoded({ extended: true })); // use for form data
 
 // All APIs
 app.use("/api/v1", candidateRoute);
+app.use("/api/v1",uploadResume);
+app.get('/',(req,res)=>{
+   res.sendFile(path.join(__dirName,"public","index.html"))
+})
+
+app.get('/resume',(req,res)=>{
+   res.sendFile(path.join(__dirName,"public","resume.html"))
+})
 
 // Server started and database connectivity
-const PORT = process.env.PORT || 5000; // default to port 5000 if not set
+const PORT = process.env.PORT || 2000; // default to port 5000 if not set
 
 app.listen(PORT, async () => {
   try {
@@ -45,3 +55,5 @@ app.listen(PORT, async () => {
     console.log(`Error in connectivity: ${error.message}`);
   }
 });
+
+

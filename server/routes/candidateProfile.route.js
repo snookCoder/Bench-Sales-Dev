@@ -4,12 +4,7 @@ import multer from "multer";
 
 const candidateRoute = express.Router();
 
-//memeory storage for cloud upload
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
-
-//using multer disk storage
-
+// Multer disk storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -21,9 +16,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Fix: Ensure the field name matches exactly with the frontend input name
 candidateRoute.post(
   "/createCandidateProfile",
-  upload.single("resumeUpload"),
+  upload.fields([{ name: "csvFile", maxCount: 1 }]), // Using fields method
   createCandidateProfile
 );
 
