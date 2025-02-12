@@ -8,7 +8,7 @@
 <body>
 
     <h2>Upload Resume</h2>
-    <form action="http://localhost:4000/api/v1/uploadResume" method="POST" enctype="multipart/form-data">
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
         <label>Email:</label>
         <input type="email" name="email" required>
         <br><br>
@@ -17,5 +17,15 @@
         <br><br>
         <button type="submit">Upload</button>
     </form>
+
+    <script>
+        // Define API base URL dynamically based on environment
+        const API_BASE_URL = window.location.hostname === "localhost" 
+            ? "http://localhost:4000" 
+            : "https://bench-sales-dev.onrender.com";
+
+        // Set form action dynamically
+        document.getElementById("uploadForm").action = `${API_BASE_URL}/api/v1/uploadResume`;
+    </script>
 </body>
 </html>
