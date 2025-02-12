@@ -6,11 +6,15 @@ import dotenv from 'dotenv';
 import cookie from 'cookie'
 import { candidateProfileModel } from "../models/candidateProfile.model.js";
 import { generateToken } from "../utils/generateToken.js";
+import fs from 'fs';
+import csvParser from 'csv-parser';
+import { upload } from "../utils/multer.js";
 dotenv.config();
 
 
 //create the recruiter  profile
 const recruiterDetails = async(req,res)=>{
+    console.log("worked")
   
     try {
 
@@ -42,6 +46,55 @@ const recruiterDetails = async(req,res)=>{
     } catch (error) {
         return response_success(res,500,false,'error in catch api',error.message)
     }
+}
+
+//upload csvrecruiter functionaity
+const uploadRecruiter = async(req,res)=>{
+
+   try {
+   
+    //csv upload thing
+    const csvFilePath = req.files.csvFile[0].path;
+    const recruiters = [];
+    console.log(csvFilePath)
+    fs.createReadStream(csvFilePath)
+    .pipe(csvParser())
+    .on("data",(row)=>{
+      
+        recruiters.push({
+            firstName:row.firstName.trim() || "dummy",
+            lastName:row.lastName.trim()||'dummy',
+            email:row.email.trim()||"dummy",
+            gender:row.gender.trim()||"dummy",
+            username:row.username.trim()||"dummy",
+            password:row.password.trim()||"dummy"
+
+        })
+
+    }).on("end",async()=>{
+
+        for(const recruiter of recruiters){
+              const emailExist = await recruiterModel.findOne({email:recruiter.email});
+              if(emailExist){
+                continue;
+              }
+
+              await recruiterModel.create(recruiter)
+        }
+
+
+        fs.unlink(csvFilePath,(err)=>{
+           if(err){
+            console.log(err)
+           }
+        })
+
+        return response_success(res,200,true,"recruiter unniqu insertion succesfully",recruiters)
+    })
+
+   } catch (error) {
+      return response_success(res,500,false,'error in upload recruiter api',error.message)
+   }
 }
 
 //login the recruiter
@@ -146,4 +199,4 @@ const refresh = async(req,res)=>{
 }
 
 
-export {recruiterDetails,recruiterLogin,refresh}
+export {recruiterDetails,recruiterLogin,refresh,uploadRecruiter}
