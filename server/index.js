@@ -7,6 +7,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { uploadResume } from "./routes/uploadResume.js";
 import { candidateProfileModel } from "./models/candidateProfile.model.js";
+import { recruiterRoute } from "./routes/recruiterProfile.js";
+import { recruiterModel } from "./models/recruiterProfile.js";
 
 dotenv.config();
 
@@ -30,6 +32,7 @@ app.use(express.urlencoded({ extended: true })); // use for form data
 // All APIs
 app.use("/api/v1", candidateRoute);
 app.use("/api/v1",uploadResume);
+app.use('/api/v1',recruiterRoute)
 app.get('/',(req,res)=>{
    res.sendFile(path.join(__dirName,"public","index.html"))
 })
@@ -55,5 +58,4 @@ app.listen(PORT, async () => {
     console.log(`Error in connectivity: ${error.message}`);
   }
 });
-
 
