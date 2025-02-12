@@ -57,4 +57,3 @@ app.listen(PORT, async () => {
 });
 
 
-await candidateProfileModel.deleteMany({})

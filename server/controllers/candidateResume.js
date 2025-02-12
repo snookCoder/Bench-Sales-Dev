@@ -1,5 +1,10 @@
 import { candidateProfileModel } from "../models/candidateProfile.model.js";
 import { response_success } from "../utils/response.utils.js"
+import dotenv from 'dotenv'
+dotenv.config();
+
+const local = process.env.uploadPathLocal;
+const production = process.env.uploadPathProd;
 
 const candidateResume = async(req,res)=>{
    
@@ -23,7 +28,7 @@ try {
           return response_success(res,400,false,"candidate not exist please add candidate before uploading the resume",null)
       }
   
-     const resumePath = `http:localhost:4000/${req.file.path}`;
+     const resumePath = `${production}/${req.file.path}`;
      console.log("resumePath",resumePath)
      
      if(candidate.resumeUpload){

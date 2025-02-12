@@ -12,6 +12,7 @@ const candidateProfile = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique:true,
     default: "test@gmail.com",
   },
   phoneNumber: {

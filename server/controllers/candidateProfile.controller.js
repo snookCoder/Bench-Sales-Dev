@@ -22,25 +22,31 @@ const createCandidateProfile = async (req, res) => {
     .pipe(csvParser())
     .on("data", (row) => {
       candidates.push({
-        firstName: row.firstName.trim(),
-        lastName: row.lastName.trim(),
-        email: row.email.trim(),
-        phoneNumber: Number(row.phoneNumber),
-        skills: row.skills.trim().split("|").join(", "), // Convert skills
-        status: row.status.trim(),
+        firstName: row.firstName.trim() || "", // Default to empty string if undefined
+        lastName: row.lastName.trim() || "",
+        email: row.email ? row.email.trim() : "",  // Avoid undefined error
+        phoneNumber: row.phoneNumber ? Number(row.phoneNumber) : null,
+        skills: row.skills ? row.skills.trim().split("|").join(", ") : "", 
+        status: row.status ? row.status.trim() : "Inactive", // Default status
         createdAt: Math.floor(Date.now() / 1000),
         updatedAt: Math.floor(Date.now() / 1000),
       });
     }).on("end",async()=>{
-        const insertedCandidates = await candidateProfileModel.insertMany(
-        candidates
-      );
+       
+      for(const candidate of candidates){
+         const emailExist = await candidateProfileModel.findOne({email:candidate.email});
+         if(emailExist){
+            continue;
+         }
+
+         await candidateProfileModel.create(candidate)
+      }
 
       fs.unlink(csvFilePath, (err) => {
         if (err) console.error("Error deleting CSV file:", err);
       })
 
-      return response_success(res,200,true,'insertion succesfully',insertedCandidates)
+      return response_success(res,200,true,'insertion succesfully',candidates)
     })
   
   } catch (error) {

@@ -1,0 +1,6 @@
+﻿"firstName","lastName","email","phoneNumber","skills","status","resumeupload"
+"John","Doe","john.doe@example.com","1234567890","JavaScript|Node.js|MongoDB","Active","John_Doe_Resume.pdf"
+"Jane","Smith","jane.smith@example.com","9876543210","React|TypeScript|Express","Inactive","Jane_Smith_Resume.pdf"
+"Alice","Johnson","alice.johnson@example.com","5556677889","Python|Django|PostgreSQL","Active","Alice_Johnson_Resume.pdf"
+"Bob","Martin","bob.martin@example.com","1122334455","AWS|Docker|Kubernetes","Active","Bob_Martin_Resume.pdf"
+""
