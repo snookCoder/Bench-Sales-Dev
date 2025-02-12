@@ -99,7 +99,7 @@ const recruiterLogin = async(req,res)=>{
      await recruiter.save();
 
 
-     return response_success(res,200,true,'user login successfuly',recruiter)
+     return response_success(res,200,true,'user login successfuly',{"tokens":tokens,recruiter})
 
    } catch (error) {
       response_success(res,500,false,'catch error in recruiter login',error.message)
