@@ -4,6 +4,7 @@ import fs from 'fs';
 import csvParser from 'csv-parser';
 import { candidateProfileModel } from "../models/candidateProfile.model.js";
 import dotenv from 'dotenv';
+import mongoose from "mongoose";
 dotenv.config();
 
 //create candidate profile (upload candidate profile functionality)
@@ -92,4 +93,99 @@ const createCandidateManully = async(req,res)=>{
    }
 }
 
-export { createCandidateProfile,createCandidateManully };
+
+//get all candidate 
+const getCandidate = async(req,res)=>{
+  console.log("refresh verifcation",req.refreshVerification.payload.email)
+  console.log('all candidates')
+
+  try {
+    
+    if(req.refreshVerification.payload.email!='admin@gmail.com'){
+          
+      return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
+    }
+
+    const candidates = await candidateProfileModel.find();
+    return response_success(res,200,true,"all candidates",candidates)
+     
+  } catch (error) {
+     return response_success(res,500,false,"there is some error in catch api of get all candidatre",error.message)
+  }
+}
+
+
+//get individual candidate
+const getIndCandidate = async(req,res)=>{
+
+try {
+
+      const candidateId = new mongoose.Types.ObjectId(`${req.params.id}`);
+
+      if(!candidateId){
+        return response_success(res,400,false,"please send canidateid in params",null)
+      }
+  
+      //check in db if this id is present or not 
+      const candidate = await candidateProfileModel.findOne({_id:candidateId});
+      if(!candidate){
+        return response_success(res,400,'there is not candidate assosisate with this id ',null)
+      }
+
+      return response_success(res,200,'candidate found succesfully',candidate)
+
+      
+} catch (error) {
+   return response_success(res,500,false,"error in catch api of get individual api",error.message)
+}
+
+
+}
+
+//update individual candidate
+const updateCandidate = async(req,res)=>{
+  try {
+     const {_id,...updatedData} = req.body;
+     
+     if(!_id){
+      return response_success(res,400,false,'candidate id must needed',null)
+     }
+
+     const candidateId = new mongoose.Types.ObjectId(`${_id}`)
+
+     const candidate = await candidateProfileModel.findOne({_id:candidateId});
+
+     if(!candidate){
+         return response_success(res,400,false,'there is no candidate assosiate with this id whom you updated',null)
+     }
+
+     const updatedCandidated = await candidateProfileModel.findByIdAndUpdate({_id:candidateId},{$set:updatedData},{new:true});
+     return response_success(res,200,"user updated succesfully",updatedCandidated)
+
+  } catch (error) {
+     return response_success(res,500,false,"there is some catch error in update api of candidate",error.message)
+  }
+}
+
+//delete individual candidate
+const deleteCandidate = async(req,res)=>{
+   
+try {
+     const candidateId = req.params.id;
+     if(!candidateId){
+        return response_success(res,400,false,'please provide candidate id in params',null);
+     }
+     const candidateIdObject = new mongoose.Types.ObjectId(`${candidateId}`);
+
+     //check if this candidate is present or not
+     const candidate = await candidateProfileModel.findByIdAndDelete(candidateIdObject)
+     return response_success(res,200,true,"delete sucessfully",candidate)
+} catch (error) {
+  return response_success(res,500,false,'catch error in delete api',error.message)
+}
+
+}
+
+
+
+export { createCandidateProfile,createCandidateManully,getCandidate,getIndCandidate,updateCandidate ,deleteCandidate};

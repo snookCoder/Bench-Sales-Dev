@@ -1,0 +1,6 @@
+firstName,lastName,email,username,password,gender
+John,Doe,john.doe@example.com,john_d,Pass@123,M
+Jane,Smith,jane.smith@example.com,jane_s,Jane@456,F
+Alice,Brown,alice.brown@example.com,alice_b,Alice@789,F
+Bob,Johnson,bob.johnson@example.com,bob_j,Bob@321,M
+Charlie,Davis,charlie.davis@example.com,charlie_d,Charlie@654,M
