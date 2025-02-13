@@ -36,6 +36,7 @@ const recruiterSchema = new mongoose.Schema({
          default:()=>Math.floor(Date.now()/1000)
        }
     },
+    
     createdAt:{
         type:Number,
         default:()=>Math.floor(Date.now()/1000)

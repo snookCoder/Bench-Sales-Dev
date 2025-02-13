@@ -1,5 +1,5 @@
 import express from "express";
-import { createCandidateProfile } from "../controllers/candidateProfile.controller.js";
+import { createCandidateManully, createCandidateProfile } from "../controllers/candidateProfile.controller.js";
 import multer from "multer";
 
 const candidateRoute = express.Router();
@@ -22,5 +22,9 @@ candidateRoute.post(
   upload.fields([{ name: "csvFile", maxCount: 1 }]), // Using fields method
   createCandidateProfile
 );
+
+
+//create the caniddate profile manually 
+candidateRoute.post("/createCandidateManually",upload.single('resumeUpload'),createCandidateManully)
 
 export { candidateRoute };
