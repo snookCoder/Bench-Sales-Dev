@@ -24,7 +24,7 @@ try {
          next();
 
 } catch (error) {
-    const statusCode = error.message.includes("authorization error") ? 404 : 500;
+    const statusCode = error.message.includes("jwt expired") ? 404 : 500;
 
     return response_success(
         res,
@@ -32,7 +32,7 @@ try {
         false,
         statusCode === 404 
             ? "Authorization error, token may be invalid or expired" 
-            : "Error in catch of verify token middleware, may be refresh token expired",
+            : "Error in catch of verify token middleware, may be  token expired",
         error.message
     );
 }
