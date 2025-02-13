@@ -31,6 +31,11 @@ const candidateProfile = new mongoose.Schema({
     type: String,
     default: "",
   },
+  recruiterId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "recruiter", // Reference to the recruiterModel
+    
+  },
   createdAt: {
     type:Number,
     default: () => Math.floor(Date.now() / 1000),

@@ -3,8 +3,10 @@ import { response_success } from "../utils/response.utils.js";
 import fs from 'fs';
 import csvParser from 'csv-parser';
 import { candidateProfileModel } from "../models/candidateProfile.model.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
-//create candidate profile
+//create candidate profile (upload candidate profile functionality)
 const createCandidateProfile = async (req, res) => {
   console.log("req.body", req.body);
   console.log("req.file", req.files);
@@ -28,6 +30,7 @@ const createCandidateProfile = async (req, res) => {
         phoneNumber: row.phoneNumber ? Number(row.phoneNumber) : null,
         skills: row.skills ? row.skills.trim().split("|").join(", ") : "", 
         status: row.status ? row.status.trim() : "Inactive", // Default status
+        recruiterId:row.recruiterId,
         createdAt: Math.floor(Date.now() / 1000),
         updatedAt: Math.floor(Date.now() / 1000),
       });
@@ -42,9 +45,9 @@ const createCandidateProfile = async (req, res) => {
          await candidateProfileModel.create(candidate)
       }
 
-      fs.unlink(csvFilePath, (err) => {
-        if (err) console.error("Error deleting CSV file:", err);
-      })
+      // fs.unlink(csvFilePath, (err) => {
+      //   if (err) console.error("Error deleting CSV file:", err);
+      // })
 
       return response_success(res,200,true,'insertion succesfully',candidates)
     })
@@ -56,4 +59,37 @@ const createCandidateProfile = async (req, res) => {
 
 };
 
-export { createCandidateProfile };
+//create candidate profile manually 
+const createCandidateManully = async(req,res)=>{
+   try {
+     const {firstName,lastName,email,phoneNumber,skills,status,recruiterId} = req.body;
+     console.log(req.file.path);
+     
+     if(!email){
+       return response_success(res,400,false,"email is required",null)
+     }
+     
+     const emailExist = await candidateProfileModel.findOne({email:email});
+     if(emailExist){
+       return response_success(res,400,false,"user is alreay created email must be unique",null)
+     }
+
+     const candidateCreate  = await candidateProfileModel.create({
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        skills,
+        status,
+        recruiterId,
+        resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
+     })
+
+     return response_success(res,200,"candidate created successfully",candidateCreate)
+
+   } catch (error) {
+      return response_success(res,500,false,"catch error in create canidate profile manually",error.message)
+   }
+}
+
+export { createCandidateProfile,createCandidateManully };
