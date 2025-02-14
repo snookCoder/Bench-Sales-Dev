@@ -30,7 +30,7 @@ const createCandidateProfile = async (req, res) => {
         email: row.email ? row.email.trim() : "",  // Avoid undefined error
         phoneNumber: row.phoneNumber ? Number(row.phoneNumber) : null,
         skills: row.skills ? row.skills.trim().split("|").join(", ") : "", 
-        status: row.status ? row.status.trim() : "Inactive", // Default status
+        // status: row.status ? row.status.trim() : "Inactive", // Default status
         recruiterId:row.recruiterId,
         createdAt: Math.floor(Date.now() / 1000),
         updatedAt: Math.floor(Date.now() / 1000),
@@ -63,8 +63,13 @@ const createCandidateProfile = async (req, res) => {
 //create candidate profile manually 
 const createCandidateManully = async(req,res)=>{
    try {
-     const {firstName,lastName,email,phoneNumber,skills,status,recruiterId} = req.body;
+     const {firstName,lastName,email,phoneNumber,skills,recruiterId} = req.body;
      console.log(req.file.path);
+     console.log()
+     if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
+          
+      return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
+    }
      
      if(!email){
        return response_success(res,400,false,"email is required",null)
@@ -81,7 +86,6 @@ const createCandidateManully = async(req,res)=>{
         email,
         phoneNumber,
         skills,
-        status,
         recruiterId,
         resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
      })
@@ -101,7 +105,7 @@ const getCandidate = async(req,res)=>{
 
   try {
     
-    if(req.refreshVerification.payload.email!='admin@gmail.com'){
+    if(req.refreshVerification.payload.role!='a'){
           
       return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
     }
@@ -121,6 +125,11 @@ const getIndCandidate = async(req,res)=>{
 try {
 
       const candidateId = new mongoose.Types.ObjectId(`${req.params.id}`);
+      
+      if(req.refreshVerification.payload.role!='a'){
+          
+        return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
+      }
 
       if(!candidateId){
         return response_success(res,400,false,"please send canidateid in params",null)
@@ -147,6 +156,12 @@ const updateCandidate = async(req,res)=>{
   try {
      const {_id,...updatedData} = req.body;
      
+     if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
+          
+      return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
+    }
+
+
      if(!_id){
       return response_success(res,400,false,'candidate id must needed',null)
      }
@@ -172,6 +187,12 @@ const deleteCandidate = async(req,res)=>{
    
 try {
      const candidateId = req.params.id;
+
+     if(req.refreshVerification.payload.role!='a'){
+          
+      return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
+    }
+
      if(!candidateId){
         return response_success(res,400,false,'please provide candidate id in params',null);
      }
