@@ -126,7 +126,7 @@ const recruiterLogin = async(req,res)=>{
         return response_success(res,400,false,'password not match',null)
      }
      
-     const jwtPayload = {_id:recruiter._id,email:recruiter.email}
+     const jwtPayload = {_id:recruiter._id,email:recruiter.email,role:recruiter.role}
      
     const tokens = generateToken(jwtPayload);
     console.log("tokens",tokens)

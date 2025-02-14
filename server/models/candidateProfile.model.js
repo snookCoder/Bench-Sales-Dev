@@ -25,7 +25,8 @@ const candidateProfile = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Active", "Inactive"],
+    enum: ["Bench", "Active","Placed"],
+    default:"Bench"
   },
   resumeUpload: {
     type: String,
@@ -36,6 +37,10 @@ const candidateProfile = new mongoose.Schema({
     ref: "recruiter", // Reference to the recruiterModel
     
   },
+  interviewCount: { type: Number, default: 0 },
+  interviewPassCount: { type: Number, default: 0 },
+  interviewFailCount: { type: Number, default: 0 },
+  role:{type:String,enum:['r','c','a'],default:'c'},
   createdAt: {
     type:Number,
     default: () => Math.floor(Date.now() / 1000),

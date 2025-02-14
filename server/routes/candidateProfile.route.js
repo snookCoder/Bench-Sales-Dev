@@ -28,15 +28,15 @@ candidateRoute.post(
 
 
 //create the caniddate profile manually 
-candidateRoute.post("/createCandidateManually",upload.single('resumeUpload'),createCandidateManully)
+candidateRoute.post("/createCandidateManually",upload.single('resume'),verifyToken,createCandidateManully)
 
 //get all candidate
 candidateRoute.get("/getCandidate",verifyToken,getCandidate)
 //get indivdual candidate --> please send it throush params 
-candidateRoute.get("/getIndiCandidate/:id",getIndCandidate)
+candidateRoute.get("/getIndiCandidate/:id",verifyToken,getIndCandidate)
 //update the candidate  record
-candidateRoute.patch("/updateCandidate",updateCandidate)
+candidateRoute.patch("/updateCandidate",verifyToken,updateCandidate)
 //delete candidate
-candidateRoute.delete("/deleteCandidate/:id",deleteCandidate)
+candidateRoute.delete("/deleteCandidate/:id",verifyToken,deleteCandidate)
 
 export { candidateRoute };

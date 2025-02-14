@@ -36,7 +36,16 @@ const recruiterSchema = new mongoose.Schema({
          default:()=>Math.floor(Date.now()/1000)
        }
     },
-    
+    role:{
+        type:String,
+        enum:['r','a','c'],
+        default:'r'
+    },
+    totalSubmissions: { type: Number, default: 0 },
+    successfulPlacements: { type: Number, default: 0 },
+    performanceScore: { type: Number, default: 0 }, // Score based on performance
+
+  
     createdAt:{
         type:Number,
         default:()=>Math.floor(Date.now()/1000)
