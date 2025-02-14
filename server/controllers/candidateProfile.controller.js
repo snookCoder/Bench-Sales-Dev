@@ -63,9 +63,7 @@ const createCandidateProfile = async (req, res) => {
 //create candidate profile manually 
 const createCandidateManully = async(req,res)=>{
    try {
-     const {firstName,lastName,email,phoneNumber,skills,recruiterId,role} = req.body;
-     console.log(req.file.path);
-     console.log()
+     const {firstName,lastName,email,phoneNumber,skills,recruiterId} = req.body;
      if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
           
       return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
@@ -87,8 +85,7 @@ const createCandidateManully = async(req,res)=>{
         phoneNumber,
         skills,
         recruiterId,
-        resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`,
-        role:role
+        resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
      })
 
      return response_success(res,200,"candidate created successfully",candidateCreate)

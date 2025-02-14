@@ -18,7 +18,7 @@ const recruiterDetails = async(req,res)=>{
   
     try {
 
-        const {firstName,lastName,email,gender,username,password} = req.body
+        const {firstName,lastName,email,gender,username,password,role} = req.body
 
         if(!email){
             return response_success(res,400,false,'email is required',null)
@@ -38,7 +38,8 @@ const recruiterDetails = async(req,res)=>{
             email,
             gender,
             username,
-            password:hashedPassword
+            password:hashedPassword,
+            role:role
         })
         
       return response_success(res,200,true,'recruiter profile created',createRecruiter)
