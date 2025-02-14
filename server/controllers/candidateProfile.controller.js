@@ -63,7 +63,7 @@ const createCandidateProfile = async (req, res) => {
 //create candidate profile manually 
 const createCandidateManully = async(req,res)=>{
    try {
-     const {firstName,lastName,email,phoneNumber,skills,recruiterId} = req.body;
+     const {firstName,lastName,email,phoneNumber,skills,recruiterId,role} = req.body;
      console.log(req.file.path);
      console.log()
      if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
@@ -87,7 +87,8 @@ const createCandidateManully = async(req,res)=>{
         phoneNumber,
         skills,
         recruiterId,
-        resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
+        resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`,
+        role:role
      })
 
      return response_success(res,200,"candidate created successfully",candidateCreate)
