@@ -102,6 +102,7 @@ const uploadRecruiter = async(req,res)=>{
 const recruiterLogin = async(req,res)=>{
    try {
     
+    
      const {email,password} = req.body;
 
      //email not entered
@@ -117,6 +118,7 @@ const recruiterLogin = async(req,res)=>{
 
      //if email exist or not if not please signup first
      const recruiter = await recruiterModel.findOne({email});
+     console.log(recruiter)
      if(!recruiter){
         return response_success(res,400,false,'recruiter is not exist of this email  signup first',null)
      }
