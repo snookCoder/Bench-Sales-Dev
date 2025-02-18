@@ -13,7 +13,7 @@ const jobSubmit = async(req,res)=>{
      return response_success(res,400,false,'contact to recruiter  for create the job application',null)
    }
 
-   const {candidateId,clientNotes,jobTitle,company,industry,status} = req.body;
+   const {candidateId,clientNotes,jobTitle,company,industry} = req.body;
 
 
    const candidateIdObject = new mongoose.Types.ObjectId(`${candidateId}`);
@@ -28,8 +28,7 @@ const jobSubmit = async(req,res)=>{
        clientNotes,
        jobTitle,
        company,
-       industry,
-       status
+       industry
 
    })
    
