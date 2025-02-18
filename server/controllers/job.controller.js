@@ -2,6 +2,7 @@ import mongoose, { mongo } from "mongoose";
 import { response_success } from "../utils/response.utils.js"
 import { jobModel } from "../models/job.model.js";
 import { recruiterModel } from "../models/recruiterProfile.js";
+import { candidateProfileModel } from "../models/candidateProfile.model.js";
 
 const jobSubmit = async(req,res)=>{
  try {
@@ -21,6 +22,14 @@ const jobSubmit = async(req,res)=>{
    
    console.log(candidateIdObject);
    console.log(recruiterIdObject);
+
+
+   //first check if this candidate is assign to this recruiter or not
+   const assign_candidate = await candidateProfileModel.findOne({recruiterId:`${recruiterIdObject}`})
+
+   if(!assign_candidate){
+     return response_success(res,400,false,'this candidatae is not assign to this recruiter so not able to create the job for it ',null)
+   }
 
    const jobCreate = await jobModel.create({
        candidateId:candidateIdObject,

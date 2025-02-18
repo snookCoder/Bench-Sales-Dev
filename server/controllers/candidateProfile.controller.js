@@ -63,7 +63,9 @@ const createCandidateProfile = async (req, res) => {
 //create candidate profile manually 
 const createCandidateManully = async(req,res)=>{
    try {
-     const {firstName,lastName,email,phoneNumber,skills,recruiterId} = req.body;
+     const {firstName,lastName,email,phoneNumber,skills} = req.body;
+     const recruiterId = req.refreshVerification.payload._id;
+     const recruiterIdObject = new mongoose.Types.ObjectId(`${recruiterId}`);
      if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
           
       return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
@@ -84,7 +86,7 @@ const createCandidateManully = async(req,res)=>{
         email,
         phoneNumber,
         skills,
-        recruiterId,
+        recruiterId:recruiterIdObject,
         resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
      })
 
