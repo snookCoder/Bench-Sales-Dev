@@ -7,7 +7,6 @@ import { candidateProfileModel } from "../models/candidateProfile.model.js";
 const jobSubmit = async(req,res)=>{
  try {
    console.log(req.refreshVerification.payload)
- 
 
    //check the role if not recruiter then throws error
    if(req.refreshVerification.payload.role!='r'){
@@ -25,11 +24,18 @@ const jobSubmit = async(req,res)=>{
 
 
    //first check if this candidate is assign to this recruiter or not
-   const assign_candidate = await candidateProfileModel.findOne({recruiterId:`${recruiterIdObject}`})
-
+   const assign_candidate = await candidateProfileModel.findOne({_id:`${candidateIdObject}`});
    if(!assign_candidate){
-     return response_success(res,400,false,'this candidatae is not assign to this recruiter so not able to create the job for it ',null)
+     return response_success(res,400,false,'Ther is no candidate of this id please create it first  ',null)
    }
+
+   const recruiter_present = assign_candidate.recruiterDetails.find((recruiter)=>recruiter.recruiterId.toString()==recruiterIdObject.toString())
+     
+   // if recruiter is not present then say there is not recruiter assosiate with this candidate to create the job
+   if(!recruiter_present){
+    return response_success(res,400,false,"There is no recruiter assign to this paticular candidate",null)
+   }
+
 
    const jobCreate = await jobModel.create({
        candidateId:candidateIdObject,
@@ -45,7 +51,11 @@ const jobSubmit = async(req,res)=>{
    const recruiter = await recruiterModel.findOne({_id:`${recruiterIdObject}`});
    recruiter.totalSubmissions =  recruiter.totalSubmissions + 1;
    recruiter.save();
-
+   
+   //increase the particular recruiter count 
+   recruiter_present.job_submission+=1;
+   await assign_candidate.save();
+   
 
    return response_success(res,200,true,"job create succesfully",jobCreate)
 

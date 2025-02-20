@@ -1,4 +1,3 @@
-import { text } from "express";
 import mongoose from "mongoose";
 
 const candidateProfile = new mongoose.Schema({
@@ -32,14 +31,23 @@ const candidateProfile = new mongoose.Schema({
     type: String,
     default: "",
   },
-  recruiterId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "recruiter", // Reference to the recruiterModel
-    
-  },
-  interviewCount: { type: Number, default: 0 },
-  interviewPassCount: { type: Number, default: 0 },
-  interviewFailCount: { type: Number, default: 0 },
+ 
+  recruiterDetails:[
+    {
+    recruiterId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "recruiter", // Reference to the recruiterModel
+      
+    },
+    job_submission:{type:Number,default:0},
+    interviewCount: { type: Number, default: 0 },
+    interviewPassCount: { type: Number, default: 0 },
+    interviewFailCount: { type: Number, default: 0 },
+    isActive:{type:Boolean,default:false},
+    assignDate:{type:Number,default:()=>Math.floor(Date.now())}
+  }
+  ],
+
   role:{type:String,enum:['r','c','a'],default:'c'},
   createdAt: {
     type:Number,

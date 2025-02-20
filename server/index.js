@@ -10,6 +10,7 @@ import { candidateProfileModel } from "./models/candidateProfile.model.js";
 import { recruiterRoute } from "./routes/recruiterProfile.js";
 import { recruiterModel } from "./models/recruiterProfile.js";
 import { job } from "./routes/job.route.js";
+import { jobModel } from "./models/job.model.js";
 
 dotenv.config();
 

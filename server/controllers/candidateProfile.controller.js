@@ -86,7 +86,9 @@ const createCandidateManully = async(req,res)=>{
         email,
         phoneNumber,
         skills,
-        recruiterId:recruiterIdObject,
+        recruiterDetails:[{
+          recruiterId:recruiterIdObject,
+        }],
         resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
      })
 
@@ -154,7 +156,7 @@ try {
 //update individual candidate
 const updateCandidate = async(req,res)=>{
   try {
-     const {_id,...updatedData} = req.body;
+     const {_id,recruiterId,...updatedData} = req.body;
      
      if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
           
@@ -171,8 +173,20 @@ const updateCandidate = async(req,res)=>{
      const candidate = await candidateProfileModel.findOne({_id:candidateId});
 
      if(!candidate){
-         return response_success(res,400,false,'there is no candidate assosiate with this id whom you updated',null)
+         return response_success(res,400,false,'There is no candidate of this id please create first',null)
      }
+
+    
+
+     const recruiter_id_check = candidate.recruiterDetails.find((r)=>r.recruiterId.toString()===recruiterId.toString());
+
+     if(!recruiter_id_check){
+         candidate.recruiterDetails.push({
+           recruiterId:recruiterId
+         })
+     }
+
+     candidate.save();
 
      const updatedCandidated = await candidateProfileModel.findByIdAndUpdate({_id:candidateId},{$set:updatedData},{new:true});
      return response_success(res,200,"user updated succesfully",updatedCandidated)
