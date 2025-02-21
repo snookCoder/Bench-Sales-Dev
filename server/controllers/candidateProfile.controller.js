@@ -63,10 +63,9 @@ const createCandidateProfile = async (req, res) => {
 //create candidate profile manually 
 const createCandidateManully = async(req,res)=>{
    try {
-     const {firstName,lastName,email,phoneNumber,skills} = req.body;
-     const recruiterId = req.refreshVerification.payload._id;
+     const {firstName,lastName,email,phoneNumber,skills,recruiterId} = req.body;
      const recruiterIdObject = new mongoose.Types.ObjectId(`${recruiterId}`);
-     if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
+     if(req.refreshVerification.payload.role!='a'){
           
       return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
     }
@@ -128,7 +127,7 @@ try {
 
       const candidateId = new mongoose.Types.ObjectId(`${req.params.id}`);
       
-      if(req.refreshVerification.payload.role!='a'){
+      if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
           
         return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
       }
@@ -179,12 +178,14 @@ const updateCandidate = async(req,res)=>{
     
 
      const recruiter_id_check = candidate.recruiterDetails.find((r)=>r.recruiterId.toString()===recruiterId.toString());
-
+     
+     if(req.refreshVerification.payload.role!='a'){
      if(!recruiter_id_check){
          candidate.recruiterDetails.push({
            recruiterId:recruiterId
          })
      }
+    }
 
      candidate.save();
 
