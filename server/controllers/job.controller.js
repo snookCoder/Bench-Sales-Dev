@@ -19,14 +19,10 @@ const jobSubmit = async(req,res)=>{
    const candidateIdObject = new mongoose.Types.ObjectId(`${candidateId}`);
    const recruiterIdObject = new mongoose.Types.ObjectId(`${req.refreshVerification.payload._id}`)
    
-   console.log(candidateIdObject);
-   console.log(recruiterIdObject);
-
-
-   //first check if this candidate is assign to this recruiter or not
+   //first check if this candidate is present in db or not 
    const assign_candidate = await candidateProfileModel.findOne({_id:`${candidateIdObject}`});
    if(!assign_candidate){
-     return response_success(res,400,false,'Ther is no candidate of this id please create it first  ',null)
+     return response_success(res,400,false,'Ther is no candidate in the db pleaser create',null)
    }
 
    const recruiter_present = assign_candidate.recruiterDetails.find((recruiter)=>recruiter.recruiterId.toString()==recruiterIdObject.toString())
