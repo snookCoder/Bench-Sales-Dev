@@ -43,11 +43,13 @@ const candidateProfile = new mongoose.Schema({
     interviewCount: { type: Number, default: 0 },
     interviewPassCount: { type: Number, default: 0 },
     interviewFailCount: { type: Number, default: 0 },
-    isActive:{type:Boolean,default:false},
     assignDate:{type:Number,default:()=>Math.floor(Date.now())}
   }
   ],
-
+  password:{
+    type:String,
+    default:"12345"
+  },
   role:{type:String,enum:['r','c','a'],default:'c'},
   createdAt: {
     type:Number,

@@ -1,10 +1,12 @@
 // import { uploadOnCloud } from "../utils/cloudnary.util.js";
 import { response_success } from "../utils/response.utils.js";
+import bcrypt from 'bcrypt';
 import fs from 'fs';
 import csvParser from 'csv-parser';
 import { candidateProfileModel } from "../models/candidateProfile.model.js";
 import dotenv from 'dotenv';
 import mongoose from "mongoose";
+import { recruiterModel } from "../models/recruiterProfile.js";
 dotenv.config();
 
 //create candidate profile (upload candidate profile functionality)
@@ -63,8 +65,24 @@ const createCandidateProfile = async (req, res) => {
 //create candidate profile manually 
 const createCandidateManully = async(req,res)=>{
    try {
-     const {firstName,lastName,email,phoneNumber,skills,recruiterId} = req.body;
+     const {firstName,lastName,email,phoneNumber,skills,recruiterId,password} = req.body;
+
+          //if recruiter id is not present then return error 
+          if(!recruiterId){
+            return response_success(res,400,false,"recruiter id is required",null)
+          }
+    
+
      const recruiterIdObject = new mongoose.Types.ObjectId(`${recruiterId}`);
+
+
+     // if recruiter id is not present in recuirter model then return error
+     const recruiterIdCheck = await recruiterModel.findOne({_id:recruiterIdObject});
+
+     if(!recruiterIdCheck){
+       return response_success(res,400,false,"recruiter id is not present in db",null)
+     }
+
      if(req.refreshVerification.payload.role!='a'){
           
       return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
@@ -79,6 +97,9 @@ const createCandidateManully = async(req,res)=>{
        return response_success(res,400,false,"user is alreay created email must be unique",null)
      }
 
+     //conversion of passworde into hash password
+     const hashedPasswiod = await bcrypt.hash(password,10);
+
      const candidateCreate  = await candidateProfileModel.create({
         firstName,
         lastName,
@@ -88,6 +109,7 @@ const createCandidateManully = async(req,res)=>{
         recruiterDetails:[{
           recruiterId:recruiterIdObject,
         }],
+        password:hashedPasswiod,
         resumeUpload:`${process.env.uploadPathLocal}/${req.file.path}`
      })
 
@@ -157,7 +179,7 @@ const updateCandidate = async(req,res)=>{
   try {
      const {_id,recruiterId,...updatedData} = req.body;
      
-     if(req.refreshVerification.payload.role!='a' && req.refreshVerification.payload.role!='r'){
+     if(req.refreshVerification.payload.role=='c'){
           
       return response_success(res,400,false,'you are not able to use this endpoint please contact admistrator',null)
     }
