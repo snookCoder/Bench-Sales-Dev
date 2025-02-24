@@ -37,17 +37,17 @@ class ScrollTopComponent {
   }
 
   private _handlers = () => {
-    let timer: number
+    let timer: number | undefined = undefined;
     window.addEventListener('scroll', () => {
-      throttle(timer, () => {
-        this._scroll()
-      })
-    })
-
+      timer = throttle(timer, () => {
+        this._scroll();
+      }) as number | undefined;  // Cast if throttle’s return type isn’t clear
+    });
+  
     this.element.addEventListener('click', (e: Event) => {
-      e.preventDefault()
-      this._go()
-    })
+      e.preventDefault();
+      this._go();
+    });
   }
 
   private _scroll = () => {

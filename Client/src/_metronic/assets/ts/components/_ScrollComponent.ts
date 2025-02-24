@@ -294,16 +294,18 @@ class ScrollComponent {
   }
 
   public static resize() {
-    let timer: number | undefined = undefined;
+    // Window Resize Handling
     window.addEventListener('resize', function () {
+      let timer
       throttle(
         timer,
         () => {
-          ScrollComponent.updateAll();
+          // Locate and update Drawer instances on window resize
+          ScrollComponent.updateAll()
         },
         200
-      );
-    });
+      )
+    })
   }
 }
 
