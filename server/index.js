@@ -11,6 +11,7 @@ import { recruiterRoute } from "./routes/recruiterProfile.js";
 import { recruiterModel } from "./models/recruiterProfile.js";
 import { job } from "./routes/job.route.js";
 import { jobModel } from "./models/job.model.js";
+import { interviewRoutes } from "./routes/interview.route.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api/v1", candidateRoute);
 app.use("/api/v1",uploadResume);
 app.use('/api/v1',recruiterRoute)
 app.use('/api/v1',job)
+app.use('/api/v1',interviewRoutes)
 app.get('/',(req,res)=>{
    res.sendFile(path.join(__dirName,"public","index.html"))
 })
