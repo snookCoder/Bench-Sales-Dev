@@ -11,6 +11,7 @@ import { RecruiterListPageWrapper } from "../pages/MyPages/RecruitersListPage/Re
 import RecruiterProfilePage from "../pages/MyPages/RecruitersProfilePage/RecruitersProfilePage";
 import { CandidateListPageWrapper } from "../pages/MyPages/CandidatesListPage/CandidatesListPageWrapper";
 import CandidateProfilePage from "../pages/MyPages/CandidateProfilePage/CandidateProfilePage";
+// import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -29,6 +30,7 @@ const PrivateRoutes = () => {
         <Route path="auth/*" element={<Navigate to="/dashboard" />} />
         {/* Pages */}
         <Route path="dashboard" element={<DashboardWrapper />} />
+        {/* <Route path="dashboard" element={<DashboardWrapper />} /> */}
         <Route path="recruiters" element={<RecruiterListPageWrapper />} />
         {/* <Route path="recruiter-profile" element={<Navigate to="/recruiter-profile/:id/candidates" />} /> */}
         <Route path="recruiter-profile/:id/*" element={<RecruiterProfilePage />} />
