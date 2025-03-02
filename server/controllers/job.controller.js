@@ -29,7 +29,7 @@ const jobSubmit = async(req,res)=>{
      
    // if recruiter is not present then say there is not recruiter assosiate with this candidate to create the job
    if(!recruiter_present){
-    return response_success(res,400,false,"There is no recruiter assign to this paticular candidate",null)
+    return response_success(res,400,false,"This recruiter is not belong to this candidate mail your recruiter to create this job ",null)
    }
 
 
