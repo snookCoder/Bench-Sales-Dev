@@ -50,6 +50,7 @@ class ScrollTopComponent {
     });
   };
 
+
   private _scroll = () => {
     const offset = parseInt(this._getOption("offset") as string);
     const pos = getScrollTop(); // current vertical position

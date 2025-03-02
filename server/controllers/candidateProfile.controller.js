@@ -197,11 +197,19 @@ const updateCandidate = async(req,res)=>{
          return response_success(res,400,false,'There is no candidate of this id please create first',null)
      }
 
-    
+    console.log("candidate details",candidate.recruiterDetails)
 
-     const recruiter_id_check = candidate.recruiterDetails.find((r)=>r.recruiterId.toString()===recruiterId.toString());
+    //check if the recruiter is actually in the table or not 
+    const recruiter = await recruiterModel.findOne({_id:recruiterId});
+    if(!recruiter){
+      return response_success(res,400,false,'recruiter id is not present in db',null)
+    }
+
+     const recruiter_id_check = await candidate.recruiterDetails.some((r)=>r.recruiterId.toString()==recruiterId.toString());
      
-     if(req.refreshVerification.payload.role!='a'){
+     console.log("recruiter id check",recruiter_id_check)
+
+     if(req.refreshVerification.payload.role=='a'){
      if(!recruiter_id_check){
          candidate.recruiterDetails.push({
            recruiterId:recruiterId
