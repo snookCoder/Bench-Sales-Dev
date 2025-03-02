@@ -32,10 +32,10 @@ const interviewDetails = async(req,res)=>{
         }
 
         //check if this job is assosiate with this candidate or not 
-        const job = await jobModel.findOne({candidateId:candidateId});
+        const job = await jobModel.findOne({candidateId:candidateId,recruiterId:recruiterId,_id:jobId});
 
         if(!job){
-            return response_success(res,400,false,"This job is not assosiate with this candidate ",null)
+            return response_success(res,400,false,"This job is not assosiate with this candidate (recruiter id , candidate id and jobid both entries needed in job table ) ",null)
         }
 
 
