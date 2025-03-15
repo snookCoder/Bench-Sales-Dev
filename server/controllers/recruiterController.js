@@ -162,6 +162,9 @@ const recruiterLogin = async(req,res)=>{
    }
 }
 
+
+
+
 //refresh Token api
 
 const refresh = async(req,res)=>{
@@ -201,5 +204,75 @@ const refresh = async(req,res)=>{
     }
 }
 
+//CRUD OF RECRUITER DETAILS
 
-export {recruiterDetails,recruiterLogin,refresh,uploadRecruiter}
+// get all recruiters
+const get_recruiter = async(req,res)=>{
+  
+try {
+    const role = req.refreshVerification.payload.role;
+    const id = req.refreshVerification.payload._id;
+  
+    if(role!='r'){
+      return response_success(res,403,false,'you are not authorized to access this api only recruiter can do ',null)
+    }
+
+    const recruiter = await recruiterModel.find({_id:id});
+    if(!recruiter){
+      return response_success(res,404,false,'recruiter not found',null)
+    }
+    return response_success(res,200,true,'recruiter found',recruiter)
+  
+} catch (error) {
+  return response_success(res,500,false,'error in catch api',error.message)
+}
+
+}
+
+// update the recruiter details 
+const update_recruiter = async(req,res)=>{
+  try {
+    
+    const role = req.refreshVerification.payload.role;
+    const id = req.refreshVerification.payload._id;
+
+    if(role!='r'){
+      return response_success(res,400,false,'you are not authorized to access this api only recruiter can do ',null)
+    }
+
+    const {...updatedata} = req.body;
+    console.log("updatedata",updatedata)
+    const recruiter = await recruiterModel.findOneAndUpdate({_id:id},{$set:updatedata},{new:true});
+
+    return response_success(res,200,true,'recruiter updated successfully',recruiter)
+
+  } catch (error) {
+    return response_success(res,500,false,'error in catch api',error.message)
+  }
+}
+
+const delete_recruiter = async(req,res)=>{
+  try {
+    
+    const role = req.refreshVerification.payload.role;
+    const id = req.params.id;
+
+    if(role!='a'){
+      return response_success(res,400,false,'you are not authorized to access this api only admin can do ',null)
+    }
+
+    const recruiter = await recruiterModel.findOneAndDelete({_id:id});
+    if(!recruiter){
+      return response_success(res,404,false,'recruiter not found',null)
+    }
+    return response_success(res,200,true,'recruiter deleted successfully',recruiter)
+
+  } catch (error) {
+    return response_success(res,500,false,'error in catch api',error.message)
+  }
+}
+
+
+
+
+export {recruiterDetails,recruiterLogin,refresh,uploadRecruiter,get_recruiter,update_recruiter,delete_recruiter}
