@@ -13,6 +13,7 @@ import { job } from "./routes/job.route.js";
 import { jobModel } from "./models/job.model.js";
 import { interviewRoutes } from "./routes/interview.route.js";
 import { placementRoutes } from "./routes/placement.route.js";
+import { interviewModel } from "./models/interview.model.js";
 
 dotenv.config();
 

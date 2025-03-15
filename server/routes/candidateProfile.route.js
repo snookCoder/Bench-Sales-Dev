@@ -1,5 +1,5 @@
 import express from "express";
-import { createCandidateManully, createCandidateProfile, deleteCandidate, getCandidate, getIndCandidate, updateCandidate } from "../controllers/candidateProfile.controller.js";
+import { createCandidateManully, createCandidateProfile, deleteCandidate, getCandidate, updateCandidate } from "../controllers/candidateProfile.controller.js";
 import { verifyToken } from '../middleware/verifyToken.js';
 import multer from "multer";
 
@@ -32,8 +32,7 @@ candidateRoute.post("/createCandidateManually",upload.single('resume'),verifyTok
 
 //get all candidate
 candidateRoute.get("/getCandidate",verifyToken,getCandidate)
-//get indivdual candidate --> please send it throush params 
-candidateRoute.get("/getIndiCandidate/:id",verifyToken,getIndCandidate)
+
 //update the candidate  record
 candidateRoute.patch("/updateCandidate",verifyToken,updateCandidate)
 //delete candidate
