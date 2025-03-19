@@ -123,32 +123,33 @@ const createCandidateManully = async (req, res) => {
 
 //get all candidate 
 const getCandidate = async (req, res) => {
-  console.log("refresh verifcation", req.refreshVerification.payload.email)
-  console.log('all candidates')
 
   const role = req.refreshVerification.payload.role;
   const recruiterId = req.refreshVerification.payload._id;
-  const candidate_body_id = req.body.candidateId;
-  const recruiter_body_Id = req.body.recruiterId;
+  
+  const {candidateID,recruiterID} = req.query;
 
   try {
 
-    if (candidate_body_id && recruiter_body_Id) {
-      return response_success(res, 400, false, 'please provide either candidate id or recruiter id not both', null)
+    //if the role is candidate then return error
+    if (role == 'c') {
+      return response_success(res, 400, false, "you are not able to use this endpoint please contact admistrator", null)
     }
-
 
     //if role ios admin then display all candidates 
     if (role == 'a') {
 
-      // if recruiter id there in body fetch the particular candidates of the recruiter
-      if (recruiter_body_Id) {
+      //if both id present then throughs an error
+      if(candidateID && recruiterID){
+        return response_success(res, 400, false, "please provide either candidate id or recruiter id not both", null)
+      }
 
-        console.log(recruiter_body_Id)
+      // if recruiter id there in body fetch the particular candidates of the recruiter
+      if (recruiterID){
+
         const candidates = await candidateProfileModel.find({
-          "recruiterDetails.recruiterId": recruiter_body_Id
-        }).populate("recruiterDetails.recruiterId");
-        console.log("candidtae", candidates)
+          "recruiterDetails.recruiterId": recruiterID
+        }).populate({path:"recruiterDetails.recruiterId",select:"-refreshToken"});
         if (!candidates) {
           return response_success(res, 400, false, "there is no candidate in db assosiate with this recruiter id", null)
         }
@@ -156,12 +157,11 @@ const getCandidate = async (req, res) => {
       }
 
       //individual canididate 
-      if (candidate_body_id) {
+      if (candidateID) {
 
-        console.log(candidate_body_id)
         const candidates = await candidateProfileModel.findOne({
-          _id: candidate_body_id
-        }).populate("recruiterDetails.recruiterId");
+          _id: candidateID
+        }).populate({path:"recruiterDetails.recruiterId",select:"-refreshToken"});
         console.log("candidtae", candidates)
         if (!candidates) {
           return response_success(res, 400, false, "there is no candidate in db assosiate with this recruiter id", null)
@@ -169,7 +169,8 @@ const getCandidate = async (req, res) => {
         return response_success(res, 200, true, "candidates corresponding to this recruiter", candidates)
       }
 
-      const candidates = await candidateProfileModel.find().populate("recruiterDetails.recruiterId");
+      const candidates = await candidateProfileModel.find().populate( {path: "recruiterDetails.recruiterId",
+        select: "-refreshToken" });
       if (!candidates) {
         return response_success(res, 400, false, "there is no candidate in db", null)
       }
@@ -177,10 +178,10 @@ const getCandidate = async (req, res) => {
     }
 
     // if recruiter is send through token
-    if (recruiterId) {
+    if (role=='r') {
       //get individual candiidate for the recruiter
-      if (candidate_body_id) {
-        const candidates = await candidateProfileModel.findOne({ _id: candidate_body_id, "recruiterDetails.recruiterId": recruiterId }).populate("recruiterDetails.recruiterId");
+      if (candidateID) {
+        const candidates = await candidateProfileModel.findOne({ _id: candidateID, "recruiterDetails.recruiterId": recruiterId }).populate({path:"recruiterDetails.recruiterId",select:"-refreshToken"});
         if (!candidates) {
           return response_success(res, 400, false, "there is no candidate assosiate with this recruiter", null)
         }
