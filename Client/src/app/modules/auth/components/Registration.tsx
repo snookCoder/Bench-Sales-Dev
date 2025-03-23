@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import clsx from "clsx";
-import { getUserByToken, register } from "../core/_requests";
-import { Link } from "react-router-dom";
+// import { getUserByToken, register } from "../core/_requests";
+import { Link, useNavigate } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../../_metronic/helpers";
 import { PasswordMeterComponent } from "../../../../_metronic/assets/ts/components";
 import { useAuth } from "../core/Auth";
+import { register } from "../../../../ApiRequests/AuthRequests";
 
 const initialValues = {
   firstname: "",
@@ -44,6 +45,7 @@ const registrationSchema = Yup.object().shape({
 });
 
 export function Registration() {
+  const Navigation = useNavigate();
   const [loading, setLoading] = useState(false);
   const { saveAuth, setCurrentUser } = useAuth();
   const formik = useFormik({
@@ -56,10 +58,10 @@ export function Registration() {
           values.email,
           values.firstname,
           values.lastname,
-          values.password,
-          values.changepassword
+          values.password
         );
-        saveAuth(auth);
+        Navigation("/auth");
+        // saveAuth(auth);
         // const { data: user } = await getUserByToken(auth.api_token);
         // setCurrentUser();
       } catch (error) {
