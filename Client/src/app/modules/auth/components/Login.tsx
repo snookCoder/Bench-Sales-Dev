@@ -3,9 +3,11 @@ import * as Yup from "yup";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
-import { getUserByToken, login } from "../core/_requests";
+// import { getUserByToken, login } from "../core/_requests";
 import { toAbsoluteUrl } from "../../../../_metronic/helpers";
 import { useAuth } from "../core/Auth";
+import { login } from "../../../../ApiRequests/AuthRequests";
+// import Cookies from "js-cookie";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -41,9 +43,16 @@ export function Login() {
       setLoading(true);
       try {
         const { data: auth } = await login(values.email, values.password);
-        console.log(auth)
+        console.log(auth);
+        // Cookies.set(
+        //   "ACCESS_TOKEN",
+        //   JSON.stringify(auth.payload.tokens.accessToken)
+        // );
+        // Cookies.set(
+        //   "REFRESH_TOKEN",
+        //   JSON.stringify(auth.payload.tokens.refreshToken)
+        // );
         saveAuth(auth.payload.tokens);
-        // const { data: user } = await getUserByToken(auth.api_token);
         setCurrentUser({
           first_name: "Deepak",
           last_name: "Vyas",
