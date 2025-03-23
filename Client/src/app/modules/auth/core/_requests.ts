@@ -1,12 +1,11 @@
 import axios from "axios";
 import { AuthModel, AuthResponse, UserModel } from "./_models";
+import { BASE_URL } from "../../../../ApiServices/Axios";
 
-const API_URL = "https://bench-sales-dev.onrender.com/api/v1";
-
-export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/verify_token`;
-export const LOGIN_URL = `${API_URL}/loginRecruiter`;
-export const REGISTER_URL = `${API_URL}/createRecruiter`;
-export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
+export const GET_USER_BY_ACCESSTOKEN_URL = `${BASE_URL}/verify_token`;
+export const LOGIN_URL = `${BASE_URL}/loginRecruiter`;
+export const REGISTER_URL = `${BASE_URL}/createRecruiter`;
+export const REQUEST_PASSWORD_URL = `${BASE_URL}/forgot_password`;
 
 // Server should return AuthModel
 export function login(email: string, password: string) {

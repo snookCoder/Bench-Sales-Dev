@@ -9,7 +9,12 @@ import { FC } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { ErrorsPage } from "../modules/errors/ErrorsPage";
-import { Logout, AuthPage, useAuth } from "../modules/auth";
+import {
+  Logout,
+  AuthPage,
+  useAuth,
+  AUTH_LOCAL_STORAGE_KEY,
+} from "../modules/auth";
 import { App } from "../App";
 
 /**
@@ -21,8 +26,7 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { currentUser } = useAuth();
-  const isUserExists = localStorage.getItem("kt-auth-react-v");
-  console.log(currentUser);
+  const isUserExists = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>

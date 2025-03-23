@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AUTH_LOCAL_STORAGE_KEY } from "../../../../ApiServices/Axios";
 import { AuthModel, AuthTokens } from "./_models";
+import Cookies from "js-cookie";
 
-const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
+// const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
+const AUTH_LOCAL_ACCESS_TOKEN_KEY = "bs-auth-access-token";
+const AUTH_LOCAL_REFRESH_TOKEN_KEY = "bs-auth-refresh-token";
 const getAuth = (): AuthTokens | undefined => {
   if (!localStorage) {
     return;
@@ -30,7 +34,6 @@ const setAuth = (auth: AuthTokens) => {
 
   try {
     const lsValue = JSON.stringify(auth);
-    console.log(lsValue);
     localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, lsValue);
   } catch (error) {
     console.error("AUTH LOCAL STORAGE SAVE ERROR", error);
