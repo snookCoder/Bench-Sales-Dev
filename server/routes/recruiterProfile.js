@@ -1,5 +1,5 @@
 import express from 'express'
-import {  delete_recruiter, get_recruiter, recruiterDetails, recruiterLogin, refresh, update_recruiter ,uploadRecruiter } from '../controllers/recruiterController.js';
+import {  delete_recruiter, get_recruiter, profile, recruiterDetails, recruiterLogin, refresh, update_recruiter ,uploadRecruiter } from '../controllers/recruiterController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { upload } from '../utils/multer.js';
 
@@ -21,6 +21,9 @@ recruiterRoute.patch('/updateRecruiter',verifyToken,update_recruiter);
 
 //delete candidate
 recruiterRoute.delete('/deleteRecruiter/:id',verifyToken,delete_recruiter);
+
+//profile api 
+recruiterRoute.get('/profile',verifyToken,profile );
 
 
 export {recruiterRoute}
