@@ -31,8 +31,10 @@ const getRefreshToken = (): string | undefined => {
 };
 
 // Set tokens in local storage
-const setAccessToken = (token: string) => Cookies.set("ACCESS_TOKEN", token);
+// const setAccessToken = (token: string) => Cookies.set("ACCESS_TOKEN", token);
 // const setRefreshToken = (token: string) => Cookies.set("REFRESH_TOKEN", token);
+const setTokens = (tokens: any) =>
+  localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, tokens);
 
 // Public Axios Instance - No Auth Token Required
 export const axiosPublic = axios.create({
@@ -79,16 +81,20 @@ const refreshAccessToken = async (): Promise<string> => {
   // const navigation = useNavigate();
   try {
     const response: AxiosResponse<{
-      accessToken: string;
-    }> = await axiosPublic.post("api/v1/refresh", null, {
+      payload: {
+        accessToken: "";
+        refreshToken: "";
+      };
+    }> = await axiosPublic.post("/refresh", null, {
       headers: { Authorization: `Bearer ${getRefreshToken()}` },
     });
     console.log(response);
-    const { accessToken } = response.data;
+    const { accessToken, refreshToken } = response.data.payload;
 
     // Update tokens in local storage
-    setAccessToken(accessToken);
+    // setAccessToken(accessToken);
     // setRefreshToken(refreshToken);
+    setTokens(response.data.payload);
 
     return accessToken;
   } catch (error) {
@@ -107,11 +113,12 @@ axiosPrivate.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 404 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
         const newAccessToken = await refreshAccessToken();
+        console.log(newAccessToken);
         axiosPrivate.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${newAccessToken}`;

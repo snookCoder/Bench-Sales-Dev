@@ -145,6 +145,18 @@ const RecruiterProfileHeader: React.FC<RecruiterProfileHeaderProps> = ({
                       Interviews
                     </Link>
                   </li>
+                  <li className="nav-item">
+                    <Link
+                      className={`nav-link text-active-primary me-6 ${
+                        location.pathname.endsWith("/applied-jobs")
+                          ? "active"
+                          : ""
+                      }`}
+                      to={`/recruiter-profile/${recruiter?._id}/applied-jobs`}
+                    >
+                      Applied Jobs
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>

@@ -1,64 +1,63 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { KTIcon, toAbsoluteUrl } from "../../../../../_metronic/helpers";
 import { Dropdown1 } from "../../../../../_metronic/partials";
 import SearchComponent from "../../RecruitersListPage/Components/SearchInTable";
-import ScheduleInterviewForm from "./ScheduleInterview/ScheduleInterview";
 import Pagination from "../../../../MyComponents/Pagination/Pagination";
-import { getInterviews } from "../../../../../ApiRequests/InterviewRequests";
+// import { getAppliedJobs } from "../../../../../ApiRequests/JobRequests";
 import { UsersListLoading } from "../../../../modules/apps/user-management/users-list/components/loading/UsersListLoading";
 import NoData from "../../../../MyComponents/NoDataAvailable/NoData";
 import FullPageSpinner from "../../../../MyComponents/Spinner/FullPageSpinner";
 import InCardSpinner from "../../../../MyComponents/Spinner/InCardSpinner";
+import ApplyJobForm from "./ApplyJobForm/ApplyFormJob";
+// import ApplyJobForm from "./ApplyJob/ApplyJobForm";
 
 type Props = {
   className: string;
 };
 
-type InterviewType = {
+type AppliedJobType = {
   id: number;
   candidateName: string;
   candidateEmail: string;
   profileImage: string;
-  interviewDate: string;
-  interviewer: string;
+  appliedDate: string;
+  companyName: string;
   role: string;
   status: string;
 };
 
-const InterviewsList: React.FC<Props> = ({ className }) => {
-  const [interviews, setInterviews] = useState<InterviewType[]>([]);
+const AppliedJobsList: React.FC<Props> = ({ className }) => {
+  const [appliedJobs, setAppliedJobs] = useState<AppliedJobType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [showScheduleInterviewPopup, setShowScheduleInterviewPopup] =
-    useState(false);
+  const [showApplyJobPopup, setShowApplyJobPopup] = useState(false);
 
-  // API call to fetch interviews
-  const fetchInterviews = async (page: number = 1) => {
+  // API call to fetch applied jobs
+  const fetchAppliedJobs = async (page: number = 1) => {
     setLoading(true);
     setError(null);
     try {
-      console.log("Fetching Candidates...");
-      const response = await getInterviews();
-      console.log("API Response:", response.data);
-      //  setInterviews(response.data.payload);
-      setTotalPages(10);
+      console.log("Fetching Applied Jobs...");
+      //   const response = await getAppliedJobs();
+      //   console.log("API Response:", response.data);
+      //   setAppliedJobs(response.data.payload);
+      //   setTotalPages(response.data.totalPages);
     } catch (err: any) {
       console.error(
-        "Error Fetching Interviews:",
+        "Error Fetching Applied Jobs:",
         err.response?.status,
         err.message
       );
-      setError("Failed to load interviews.");
+      setError("Failed to load applied jobs.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchInterviews(currentPage);
+    fetchAppliedJobs(currentPage);
   }, [currentPage]);
 
   const handlePageChange = (page: number) => {
@@ -70,25 +69,23 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
       {/* Header */}
       <div className="card-header border-0 pt-5">
         <h3 className="card-title align-items-start flex-column">
-          <span className="card-label fw-bold fs-3 mb-1">
-            Scheduled Interviews
-          </span>
+          <span className="card-label fw-bold fs-3 mb-1">Applied Jobs</span>
           <span className="text-muted mt-1 fw-semibold fs-7">
-            {interviews.length} Interviews Scheduled
+            {appliedJobs.length} Jobs Applied
           </span>
         </h3>
         <div className="card-toolbar d-flex align-items-center gap-3 flex-wrap">
           <Dropdown1 />
           <SearchComponent
             onSearch={(query) => console.log(query)}
-            placeholder="Search Interview"
+            placeholder="Search Job Application"
           />
           <button
             className="btn btn-primary btn-sm"
-            onClick={() => setShowScheduleInterviewPopup(true)}
+            onClick={() => setShowApplyJobPopup(true)}
           >
             <KTIcon iconName="plus" className="fs-3 me-2" />
-            Schedule Interview
+            Add Applied Job
           </button>
         </div>
       </div>
@@ -96,12 +93,10 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
       {/* Body */}
       <div className="card-body py-3">
         {loading ? (
-          // <UsersListLoading message={"Loading Interviews..."} />
-          // <FullPageSpinner message="Loading Interviews"/>
-          <InCardSpinner message="Loading Interviews" />
+          <InCardSpinner message="Loading Applied Jobs" />
         ) : error ? (
-          <NoData onRetry={fetchInterviews} showRetry />
-        ) : interviews.length == 0 ? (
+          <NoData onRetry={fetchAppliedJobs} showRetry />
+        ) : appliedJobs.length === 0 ? (
           <NoData message="No records found" />
         ) : (
           <div className="table-responsive">
@@ -109,8 +104,8 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
               <thead>
                 <tr className="fw-bold text-muted bg-light">
                   <th className="ps-4 min-w-250px rounded-start">Candidate</th>
-                  <th className="min-w-150px">Interview Date</th>
-                  <th className="min-w-150px">Interviewer</th>
+                  <th className="min-w-150px">Applied Date</th>
+                  <th className="min-w-200px">Company</th>
                   <th className="min-w-200px">Role</th>
                   <th className="min-w-150px">Status</th>
                   <th className="min-w-125px text-center rounded-end">
@@ -119,13 +114,13 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
                 </tr>
               </thead>
               <tbody>
-                {interviews.map((interview) => (
-                  <tr key={interview.id}>
+                {appliedJobs.map((job) => (
+                  <tr key={job.id}>
                     <td>
                       <div className="d-flex align-items-center">
                         <div className="symbol symbol-50px me-5">
                           <img
-                            src={toAbsoluteUrl(interview.profileImage)}
+                            src={toAbsoluteUrl(job.profileImage)}
                             className="rounded-circle"
                             alt="Profile"
                           />
@@ -135,32 +130,32 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
                             href="#"
                             className="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
                           >
-                            {interview.candidateName}
+                            {job.candidateName}
                           </a>
                           <span className="text-muted fw-semibold d-block fs-7">
-                            {interview.candidateEmail}
+                            {job.candidateEmail}
                           </span>
                         </div>
                       </div>
                     </td>
                     <td>
                       <span className="text-gray-900 fw-bold fs-6">
-                        {interview.interviewDate}
+                        {job.appliedDate}
                       </span>
                     </td>
                     <td>
                       <span className="text-gray-900 fw-bold fs-6">
-                        {interview.interviewer}
+                        {job.companyName}
                       </span>
                     </td>
                     <td>
                       <span className="text-gray-900 fw-bold fs-6">
-                        {interview.role}
+                        {job.role}
                       </span>
                     </td>
                     <td>
                       <span className="badge badge-light-primary">
-                        {interview.status}
+                        {job.status}
                       </span>
                     </td>
                     <td className="text-end">
@@ -186,16 +181,16 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
         />
       </div>
 
-      {/* Schedule Interview Popup */}
-      {showScheduleInterviewPopup && (
-        <ScheduleInterviewForm
-          show={showScheduleInterviewPopup}
-          handleClose={() => setShowScheduleInterviewPopup(false)}
-          candidates={[]}
+      {/* Apply Job Popup */}
+      {showApplyJobPopup && (
+        <ApplyJobForm
+          show={showApplyJobPopup}
+          handleClose={() => setShowApplyJobPopup(false)}
+          // jobs={[]} // Fetch ca/ndidates dynamically if needed
         />
       )}
     </div>
   );
 };
 
-export { InterviewsList };
+export { AppliedJobsList };

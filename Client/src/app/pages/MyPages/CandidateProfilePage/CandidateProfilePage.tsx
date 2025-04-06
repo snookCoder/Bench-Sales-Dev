@@ -1,6 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import CandidateProfileHeader from "./CandidateProfileHeader";
 import { InterviewListPageWrapper } from "../InterviewsListPage/InterviewsListPageWrapper";
+import { AppliedJobsListPageWrapper } from "../AppliedJobsPage/AppliedJobsListPageWrapper";
 
 const CandidateProfilePage = () => (
   <Routes>
@@ -13,6 +14,7 @@ const CandidateProfilePage = () => (
       }
     >
       <Route path="interviews" element={<InterviewListPageWrapper />} />
+      <Route path="applied-jobs" element={<AppliedJobsListPageWrapper />} />
       <Route index element={<Navigate to="interviews" />} />
     </Route>
   </Routes>

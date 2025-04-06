@@ -19,6 +19,14 @@ export function MenuInner() {
         title={intl.formatMessage({ id: "MENU.CANDIDATELIST" })}
         to="/candidates"
       />
+      <MenuItem
+        title={intl.formatMessage({ id: "MENU.INTERVIEWS" })}
+        to="/interviews"
+      />
+      <MenuItem
+        title={intl.formatMessage({ id: "MENU.APPLIEDJOBS" })}
+        to="/applied-jobs"
+      />
       {/* <MenuItem title='Layout Builder' to='/builder' /> */}
       {/* <MenuInnerWithSub
         title='Crafted'

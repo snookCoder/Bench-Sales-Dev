@@ -129,6 +129,18 @@ const CandidateProfileHeader: React.FC = () => {
                       Interviews
                     </Link>
                   </li>
+                  <li className="nav-item">
+                    <Link
+                      className={`nav-link text-active-primary me-6 ${
+                        location.pathname.includes("/applied-jobs")
+                          ? "active"
+                          : ""
+                      }`}
+                      to={`/candidate-profile/${id}/applied-jobs`}
+                    >
+                      Applied Jobs
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>

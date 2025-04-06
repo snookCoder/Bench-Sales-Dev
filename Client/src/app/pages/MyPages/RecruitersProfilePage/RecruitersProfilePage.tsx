@@ -10,6 +10,8 @@ import NoData from "../../../MyComponents/NoDataAvailable/NoData";
 import FullPageSpinner from "../../../MyComponents/Spinner/FullPageSpinner";
 import { Content } from "../../../../_metronic/layout/components/Content";
 import { Toolbar } from "../../../../_metronic/layout/components/toolbar/Toolbar";
+import { AppliedJobsList } from "../AppliedJobsPage/Components/AppliedJobsList";
+import { AppliedJobsListPageWrapper } from "../AppliedJobsPage/AppliedJobsListPageWrapper";
 
 const RecruiterProfilePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -102,7 +104,7 @@ const RecruiterProfilePage = () => {
             />
           }
         />
-        <Route path="applied-jobs" element={<AppliedJobs />} />
+        <Route path="applied-jobs" element={<AppliedJobsListPageWrapper />} />
         <Route path="interviews" element={<InterviewListPageWrapper />} />
         <Route index element={<Navigate to="my-candidates" />} />
       </Route>
@@ -111,12 +113,3 @@ const RecruiterProfilePage = () => {
 };
 
 export default RecruiterProfilePage;
-
-const AppliedJobs: React.FC = () => {
-  return (
-    <div className="card p-5">
-      <h2>Applied Jobs</h2>
-      <p>Jobs applied by my-candidates.</p>
-    </div>
-  );
-};
