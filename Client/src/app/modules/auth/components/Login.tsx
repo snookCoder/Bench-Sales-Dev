@@ -57,6 +57,7 @@ export function Login() {
           first_name: "Deepak",
           last_name: "Vyas",
           email: "vyasdeepak608@gmail.com",
+          role:'r'
         });
       } catch (error) {
         console.error(error);

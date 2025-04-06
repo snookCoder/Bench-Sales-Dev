@@ -10,11 +10,11 @@ import { UserEditModal } from "../../../modules/apps/user-management/users-list/
 import { useListView } from "../../../modules/apps/user-management/users-list/core/ListViewProvider";
 import { InterviewsList } from "./Components/InterviewsList";
 
-const InterviewListPage = () => {
+const InterviewListPage = ({ isProfilePage }: any) => {
   // const { itemIdForUpdate } = useListView();
   return (
     <>
-      {/* <Toolbar /> */}
+      {!isProfilePage && <Toolbar />}
       <Content>
         {/* <KTCard>
           <UsersListHeader />
@@ -28,17 +28,19 @@ const InterviewListPage = () => {
   );
 };
 
-const InterviewListPageWrapper = () => {
+const InterviewListPageWrapper = ({ isProfilePage = true }: any) => {
   const intl = useIntl();
   return (
     <>
-      {/* <PageTitle
-        breadcrumbs={[]}
-        description="You can add and manage your Interviews here."
-      >
-        {intl.formatMessage({ id: "MENU.InterVIEWS" })}
-      </PageTitle> */}
-      <InterviewListPage />
+      {!isProfilePage && (
+        <PageTitle
+          breadcrumbs={[]}
+          description="You can add and manage your interviews here."
+        >
+          {intl.formatMessage({ id: "MENU.INTERVIEWS" })}
+        </PageTitle>
+      )}
+      <InterviewListPage isProfilePage={isProfilePage} />
     </>
   );
 };
