@@ -10,9 +10,13 @@ import { UsersListLoading } from "../../../../modules/apps/user-management/users
 import NoData from "../../../../MyComponents/NoDataAvailable/NoData";
 import FullPageSpinner from "../../../../MyComponents/Spinner/FullPageSpinner";
 import InCardSpinner from "../../../../MyComponents/Spinner/InCardSpinner";
+import { ICandidateList } from "../../../../../Types/CandidatesInterface";
+import { IRecruiterList } from "../../../../../Types/RecruiterInterface";
 
 type Props = {
   className: string;
+  selectedCandidate: ICandidateList;
+  recruiter: IRecruiterList;
 };
 
 type InterviewType = {
@@ -26,7 +30,11 @@ type InterviewType = {
   status: string;
 };
 
-const InterviewsList: React.FC<Props> = ({ className }) => {
+const InterviewsList: React.FC<Props> = ({
+  className,
+  selectedCandidate,
+  recruiter,
+}) => {
   const [interviews, setInterviews] = useState<InterviewType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -191,7 +199,9 @@ const InterviewsList: React.FC<Props> = ({ className }) => {
         <ScheduleInterviewForm
           show={showScheduleInterviewPopup}
           handleClose={() => setShowScheduleInterviewPopup(false)}
-          candidates={[]}
+          selectedCandidate={selectedCandidate}
+          recruiter={recruiter}
+          // candidates={[]}
         />
       )}
     </div>
