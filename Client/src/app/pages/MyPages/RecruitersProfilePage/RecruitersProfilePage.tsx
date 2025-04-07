@@ -104,8 +104,8 @@ const RecruiterProfilePage = () => {
             />
           }
         />
-        <Route path="applied-jobs" element={<AppliedJobsListPageWrapper />} />
-        <Route path="interviews" element={<InterviewListPageWrapper />} />
+        <Route path="applied-jobs" element={<AppliedJobsListPageWrapper recruiter={recruiter}/>} />
+        <Route path="interviews" element={<InterviewListPageWrapper recruiter={recruiter}/>} />
         <Route index element={<Navigate to="my-candidates" />} />
       </Route>
     </Routes>

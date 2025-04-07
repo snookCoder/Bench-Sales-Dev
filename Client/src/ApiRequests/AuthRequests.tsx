@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { axiosPrivate, axiosPublic } from "../ApiServices/Axios";
 import { AuthResponse, UserModel } from "../app/modules/auth";
+import { IProfileResponse } from "../Types/ProfileInterface";
 // import { axiosPublic, axiosPrivate } from "../../../../ApiServices/Axios";
 // import { AuthResponse, UserModel } from "./_models";
 
@@ -9,6 +10,7 @@ export const GET_USER_BY_ACCESSTOKEN_URL = "/verify_token";
 export const LOGIN_URL = "/loginRecruiter";
 export const REGISTER_URL = "/createRecruiter";
 export const REQUEST_PASSWORD_URL = "/forgot_password";
+export const PROFILE_URL = "/profile";
 
 // 🔹 Login (Public API)
 export function login(email: string, password: string) {
@@ -38,4 +40,9 @@ export function requestPassword(email: string) {
 // 🔹 Get User by Access Token (Protected API)
 export function getUserByToken() {
   return axiosPrivate.get<UserModel>(GET_USER_BY_ACCESSTOKEN_URL);
+}
+
+//Get User Profile
+export function getUserProfile() {
+  return axiosPrivate.get<IProfileResponse>(PROFILE_URL);
 }

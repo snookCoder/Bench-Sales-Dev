@@ -10,8 +10,9 @@ import { UserEditModal } from "../../../modules/apps/user-management/users-list/
 import { useListView } from "../../../modules/apps/user-management/users-list/core/ListViewProvider";
 import { InterviewsList } from "./Components/InterviewsList";
 
-const InterviewListPage = ({ isProfilePage }: any) => {
+const InterviewListPage = ({ isProfilePage, candidate, recruiter }: any) => {
   // const { itemIdForUpdate } = useListView();
+  console.log(candidate);
   return (
     <>
       {!isProfilePage && <Toolbar />}
@@ -21,14 +22,23 @@ const InterviewListPage = ({ isProfilePage }: any) => {
           <UsersTable />
         </KTCard> */}
         {/* {itemIdForUpdate !== undefined && <UserEditModal />} */}
-        <InterviewsList className="mb-5 mb-xl-8" />
+        <InterviewsList
+          className="mb-5 mb-xl-8"
+          selectedCandidate={candidate}
+          recruiter={recruiter}
+        />
         {/* end::Row */}
       </Content>
     </>
   );
 };
 
-const InterviewListPageWrapper = ({ isProfilePage = true }: any) => {
+const InterviewListPageWrapper = ({
+  isProfilePage = true,
+  candidate,
+  recruiter,
+}: any) => {
+  console.log(candidate);
   const intl = useIntl();
   return (
     <>
@@ -40,7 +50,11 @@ const InterviewListPageWrapper = ({ isProfilePage = true }: any) => {
           {intl.formatMessage({ id: "MENU.INTERVIEWS" })}
         </PageTitle>
       )}
-      <InterviewListPage isProfilePage={isProfilePage} />
+      <InterviewListPage
+        isProfilePage={isProfilePage}
+        candidate={candidate}
+        recruiter={recruiter}
+      />
     </>
   );
 };

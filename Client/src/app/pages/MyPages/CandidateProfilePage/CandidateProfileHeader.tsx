@@ -8,39 +8,50 @@ import { Spinner } from "react-bootstrap";
 import NoData from "../../../MyComponents/NoDataAvailable/NoData";
 import { ICandidateList } from "../../../../Types/CandidatesInterface";
 
-const CandidateProfileHeader: React.FC = () => {
+interface CandidateProfileHeaderProps {
+  candidate: ICandidateList | null;
+  fetchCandidate: (candidateID: any) => {};
+  loading: Boolean;
+  error: String | null;
+}
+
+const CandidateProfileHeader: React.FC<CandidateProfileHeaderProps> = ({
+  candidate,
+  fetchCandidate,
+  loading,
+  error,
+}) => {
+  console.log(error,loading)
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
 
-  const [candidate, setCandidate] = useState<ICandidateList | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [candidate, setCandidate] = useState<ICandidateList | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      fetchCandidateById(id);
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     fetchCandidateById(id);
+  //   }
+  // }, [id]);
 
-  const fetchCandidateById = async (candidateId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      console.log("Fetching Candidate...");
-      const response = await getCandidateByID(candidateId);
-      console.log("API Response:", response);
-      setCandidate(response.data.payload); // Assuming API response structure
-    } catch (err: any) {
-      console.error(
-        "Error Fetching Candidate:",
-        err.response?.status,
-        err.message
-      );
-      setError("Failed to load candidate.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchCandidateById = async (candidateId: string) => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     console.log("Fetching Candidate...");
+  //     const response = await getCandidateByID(candidateId);
+  //     console.log("API Response:", response);
+  //     setCandidate(response.data.payload); // Assuming API response structure
+  //   } catch (err: any) {
+  //     console.error(
+  //       "Error Fetching Candidate:",
+  //       err.response?.status,
+  //       err.message
+  //     );
+  //     setError("Failed to load candidate.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <>
@@ -56,7 +67,7 @@ const CandidateProfileHeader: React.FC = () => {
               <NoData
                 showRetry
                 onRetry={() => {
-                  fetchCandidateById(id || "");
+                  fetchCandidate(id);
                 }}
               />
             </div>

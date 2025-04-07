@@ -6,7 +6,8 @@ import { useFormik } from "formik";
 // import { getUserByToken, login } from "../core/_requests";
 import { toAbsoluteUrl } from "../../../../_metronic/helpers";
 import { useAuth } from "../core/Auth";
-import { login } from "../../../../ApiRequests/AuthRequests";
+import { getUserProfile, login } from "../../../../ApiRequests/AuthRequests";
+import { AUTH_LOCAL_STORAGE_USER_PROFILE_KEY } from "../../../../ApiServices/Axios";
 // import Cookies from "js-cookie";
 
 const loginSchema = Yup.object().shape({
@@ -43,7 +44,6 @@ export function Login() {
       setLoading(true);
       try {
         const { data: auth } = await login(values.email, values.password);
-        console.log(auth);
         // Cookies.set(
         //   "ACCESS_TOKEN",
         //   JSON.stringify(auth.payload.tokens.accessToken)
@@ -53,11 +53,16 @@ export function Login() {
         //   JSON.stringify(auth.payload.tokens.refreshToken)
         // );
         saveAuth(auth.payload.tokens);
+        const profileResponse = await getUserProfile();
+        localStorage.setItem(
+          AUTH_LOCAL_STORAGE_USER_PROFILE_KEY,
+          JSON.stringify(profileResponse.data.payload)
+        );
         setCurrentUser({
           first_name: "Deepak",
           last_name: "Vyas",
           email: "vyasdeepak608@gmail.com",
-          role:'r'
+          role: "r",
         });
       } catch (error) {
         console.error(error);

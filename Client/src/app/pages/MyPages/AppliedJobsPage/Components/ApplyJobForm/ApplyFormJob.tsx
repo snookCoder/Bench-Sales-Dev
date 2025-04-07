@@ -7,11 +7,20 @@ import { KTIcon } from "../../../../../../_metronic/helpers";
 import Select from "react-select";
 import { getCandidates } from "../../../../../../ApiRequests/CandidateRequest";
 import { createAppliedJob } from "../../../../../../ApiRequests/AppliedJobsRequest";
+import { ICandidateList } from "../../../../../../Types/CandidatesInterface";
+import { IRecruiterList } from "../../../../../../Types/RecruiterInterface";
+import {
+  IRecruiterProfile,
+  UserRolesEnum,
+} from "../../../../../../Types/ProfileInterface";
+import { getUserProfileFromLocalStorage } from "../../../../../Helpers/Helpers";
 // import { createJob } from "../../../../../../ApiRequests/JobRequests";
 
 interface CreateJobFormProps {
   show: boolean;
   handleClose: (isCreated?: boolean) => void;
+  selectedCandidate: ICandidateList;
+  recruiter: IRecruiterList;
 }
 
 const CreateJobSchema = Yup.object().shape({
@@ -38,7 +47,13 @@ const industryOptions = [
   { value: "Education", label: "Education" },
 ];
 
-const ApplyJobForm: React.FC<CreateJobFormProps> = ({ show, handleClose }) => {
+const ApplyJobForm: React.FC<CreateJobFormProps> = ({
+  show,
+  handleClose,
+  selectedCandidate,
+  recruiter,
+}) => {
+  const currentUser: IRecruiterProfile = getUserProfileFromLocalStorage();
   const [loading, setLoading] = useState(false);
   const [candidates, setCandidates] = useState<
     { label: string; value: string }[]
@@ -47,7 +62,13 @@ const ApplyJobForm: React.FC<CreateJobFormProps> = ({ show, handleClose }) => {
   // Replace this URL with your actual API endpoint
   const fetchCandidates = async () => {
     try {
-      const response = await getCandidates(); // 🔁 Adjust API path
+      const response = await getCandidates(
+        recruiter?._id
+          ? recruiter?._id
+          : currentUser?.role == UserRolesEnum.Recruiter
+          ? currentUser?._id
+          : ""
+      ); // 🔁 Adjust API path
       const options = response.data.payload.map((candidate: any) => ({
         label: candidate.name || `${candidate.firstName} ${candidate.lastName}`, // Adjust based on API
         value: candidate._id,
@@ -69,7 +90,7 @@ const ApplyJobForm: React.FC<CreateJobFormProps> = ({ show, handleClose }) => {
 
   const formik = useFormik({
     initialValues: {
-      selectedCandidate: "",
+      selectedCandidate: selectedCandidate?._id || "",
       title: "",
       description: "",
       location: "",
@@ -137,20 +158,30 @@ const ApplyJobForm: React.FC<CreateJobFormProps> = ({ show, handleClose }) => {
 
           <div className="row g-4">
             {/* Candidate Dropdown */}
-            <div className="col-md-12">
+            <div className="col-md-6">
               <label className="form-label">Candidate</label>
-              <Select
-                className="react-select-styled react-select-solid"
-                classNamePrefix="react-select"
-                options={candidates}
-                placeholder="Select Candidate"
-                onChange={(option: any) =>
-                  formik.setFieldValue("selectedCandidate", option?.value)
-                }
-                value={candidates.find(
-                  (option) => option.value === formik.values.selectedCandidate
-                )}
-              />
+              {selectedCandidate?._id ? (
+                <input
+                  type="text"
+                  className="form-control"
+                  value={`${selectedCandidate.firstName} ${selectedCandidate.lastName}`}
+                  disabled
+                />
+              ) : (
+                <Select
+                  className="react-select-styled react-select-solid"
+                  classNamePrefix="react-select"
+                  options={candidates}
+                  placeholder="Select Candidate"
+                  onChange={async (option) => {
+                    formik.setFieldValue("candidateId", option?.value);
+                  }}
+                  value={candidates.find(
+                    (option: any) =>
+                      option.value === formik.values.selectedCandidate
+                  )}
+                />
+              )}
               {formik.touched.selectedCandidate &&
                 formik.errors.selectedCandidate && (
                   <div className="text-danger">

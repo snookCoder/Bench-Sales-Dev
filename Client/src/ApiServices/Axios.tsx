@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 
 // Base URL of your API
 export const AUTH_LOCAL_STORAGE_KEY = "bs-auth-token";
+export const AUTH_LOCAL_STORAGE_USER_PROFILE_KEY = "bs-user-profile";
 // const BASE_URL = 'https://betting-app-gold.vercel.app/';  //Live
 // export const BASE_URL_RENDER = "https://bank-nft.onrender.com/"; //Local
 // export const BASE_URL = "http://localhost:4000/"; //Local

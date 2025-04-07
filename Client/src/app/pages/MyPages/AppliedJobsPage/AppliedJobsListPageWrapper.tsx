@@ -4,7 +4,7 @@ import { AppliedJobsList } from "./Components/AppliedJobsList";
 import { PageTitle } from "../../../../_metronic/layout/core";
 import { Toolbar } from "../../../../_metronic/layout/components/toolbar/Toolbar";
 
-const AppliedJobsListPage = ({ isProfilePage }: any) => {
+const AppliedJobsListPage = ({ isProfilePage, candidate, recruiter }: any) => {
   // const { itemIdForUpdate } = useListView();
   return (
     <>
@@ -15,14 +15,22 @@ const AppliedJobsListPage = ({ isProfilePage }: any) => {
           <UsersTable />
         </KTCard> */}
         {/* {itemIdForUpdate !== undefined && <UserEditModal />} */}
-        <AppliedJobsList className="mb-5 mb-xl-8" />
+        <AppliedJobsList
+          className="mb-5 mb-xl-8"
+          selectedCandidate={candidate}
+          recruiter={recruiter}
+        />
         {/* end::Row */}
       </Content>
     </>
   );
 };
 
-const AppliedJobsListPageWrapper = ({ isProfilePage = true }: any) => {
+const AppliedJobsListPageWrapper = ({
+  isProfilePage = true,
+  candidate,
+  recruiter,
+}: any) => {
   const intl = useIntl();
   return (
     <>
@@ -34,7 +42,11 @@ const AppliedJobsListPageWrapper = ({ isProfilePage = true }: any) => {
           {intl.formatMessage({ id: "MENU.APPLIEDJOBS" })}
         </PageTitle>
       )}
-      <AppliedJobsListPage isProfilePage={isProfilePage} />
+      <AppliedJobsListPage
+        isProfilePage={isProfilePage}
+        candidate={candidate}
+        recruiter={recruiter}
+      />
     </>
   );
 };

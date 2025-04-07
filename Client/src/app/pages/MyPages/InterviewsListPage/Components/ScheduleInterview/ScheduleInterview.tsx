@@ -12,6 +12,13 @@ import {
   ICandidateListResponse,
 } from "../../../../../../Types/CandidatesInterface";
 import axios from "axios";
+import {
+  IProfileResponse,
+  IRecruiterProfile,
+  UserRolesEnum,
+} from "../../../../../../Types/ProfileInterface";
+import { getUserProfileFromLocalStorage } from "../../../../../Helpers/Helpers";
+import { IRecruiterList } from "../../../../../../Types/RecruiterInterface";
 
 interface Candidate {
   id: string;
@@ -22,6 +29,8 @@ interface ScheduleInterviewFormProps {
   candidates?: Candidate[];
   show: boolean;
   handleClose: (isCreated?: boolean) => void;
+  selectedCandidate: ICandidateList;
+  recruiter: IRecruiterList;
 }
 
 const InterviewSchema = Yup.object().shape({
@@ -43,11 +52,14 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
   // candidates,
   show,
   handleClose,
+  selectedCandidate,
+  recruiter,
 }) => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [candidates, setCandidates] = useState<any>([]);
   const [jobs, setJobs] = useState<any>([]);
+  const currentUser: IRecruiterProfile = getUserProfileFromLocalStorage();
 
   const getJobPlacements = async (candidateId: string) => {
     // Example API call: adjust based on your actual endpoint
@@ -77,7 +89,12 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const candidatesResponse = await getCandidates();
+        console.log(recruiter)
+        const candidatesResponse = await getCandidates(
+          recruiter?._id ? recruiter?._id : currentUser?.role == UserRolesEnum.Recruiter
+            ? currentUser._id
+            : ""
+        );
         const candidatesData: ICandidateList[] =
           candidatesResponse.data.payload;
 
@@ -88,10 +105,11 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
 
         setCandidates(candidateOptions);
 
-        const firstCandidateId = candidateOptions[0]?.value;
-        if (firstCandidateId) {
-          await fetchJobsForCandidate(firstCandidateId);
-          formik.setFieldValue("candidateId", firstCandidateId);
+        const selectedId = selectedCandidate?._id || candidateOptions[0]?.value;
+
+        if (selectedId) {
+          formik.setFieldValue("candidateId", selectedId);
+          await fetchJobsForCandidate(selectedId);
         }
       } catch (error) {
         console.error("Error loading initial data:", error);
@@ -101,11 +119,11 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
     };
 
     fetchInitialData();
-  }, []);
+  }, [selectedCandidate]);
 
   const formik = useFormik({
     initialValues: {
-      candidateId: "",
+      candidateId: selectedCandidate?._id || "",
       jobId: "",
       companyName: "",
       role: "",
@@ -177,22 +195,30 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
           <div className="row g-4">
             <div className="col-md-6">
               <label className="form-label">Candidate</label>
-              <Select
-                className="react-select-styled react-select-solid"
-                classNamePrefix="react-select"
-                options={candidates}
-                placeholder="Select Candidate"
-                onChange={async (option) => {
-                  formik.setFieldValue("candidateId", option?.value);
-                  if (option?.value) {
-                    await fetchJobsForCandidate(option.value);
-                  }
-                }}
-                value={candidates.find(
-                  (option: any) => option.value === formik.values.candidateId
-                )}
-              />
-
+              {selectedCandidate?._id ? (
+                <input
+                  type="text"
+                  className="form-control"
+                  value={`${selectedCandidate.firstName} ${selectedCandidate.lastName}`}
+                  disabled
+                />
+              ) : (
+                <Select
+                  className="react-select-styled react-select-solid"
+                  classNamePrefix="react-select"
+                  options={candidates}
+                  placeholder="Select Candidate"
+                  onChange={async (option) => {
+                    formik.setFieldValue("candidateId", option?.value);
+                    if (option?.value) {
+                      await fetchJobsForCandidate(option.value);
+                    }
+                  }}
+                  value={candidates.find(
+                    (option: any) => option.value === formik.values.candidateId
+                  )}
+                />
+              )}
               {formik.touched.candidateId && formik.errors.candidateId && (
                 <div className="text-danger">{formik.errors.candidateId}</div>
               )}

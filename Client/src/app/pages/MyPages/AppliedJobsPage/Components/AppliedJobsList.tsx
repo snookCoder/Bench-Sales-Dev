@@ -9,10 +9,14 @@ import NoData from "../../../../MyComponents/NoDataAvailable/NoData";
 import FullPageSpinner from "../../../../MyComponents/Spinner/FullPageSpinner";
 import InCardSpinner from "../../../../MyComponents/Spinner/InCardSpinner";
 import ApplyJobForm from "./ApplyJobForm/ApplyFormJob";
+import { ICandidateList } from "../../../../../Types/CandidatesInterface";
+import { IRecruiterList } from "../../../../../Types/RecruiterInterface";
 // import ApplyJobForm from "./ApplyJob/ApplyJobForm";
 
 type Props = {
   className: string;
+  selectedCandidate: ICandidateList;
+  recruiter: IRecruiterList;
 };
 
 type AppliedJobType = {
@@ -26,7 +30,11 @@ type AppliedJobType = {
   status: string;
 };
 
-const AppliedJobsList: React.FC<Props> = ({ className }) => {
+const AppliedJobsList: React.FC<Props> = ({
+  className,
+  selectedCandidate,
+  recruiter,
+}) => {
   const [appliedJobs, setAppliedJobs] = useState<AppliedJobType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -186,6 +194,8 @@ const AppliedJobsList: React.FC<Props> = ({ className }) => {
         <ApplyJobForm
           show={showApplyJobPopup}
           handleClose={() => setShowApplyJobPopup(false)}
+          selectedCandidate={selectedCandidate}
+          recruiter={recruiter}
           // jobs={[]} // Fetch ca/ndidates dynamically if needed
         />
       )}

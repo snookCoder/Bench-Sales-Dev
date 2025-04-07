@@ -2,19 +2,24 @@ import { MenuItem } from "./MenuItem";
 import { MenuInnerWithSub } from "./MenuInnerWithSub";
 import { MegaMenu } from "./MegaMenu";
 import { useIntl } from "react-intl";
+import { getUserProfileFromLocalStorage } from "../../../../app/Helpers/Helpers";
+import { IRecruiterProfile, UserRolesEnum } from "../../../../Types/ProfileInterface";
 
 export function MenuInner() {
   const intl = useIntl();
+  const currentUser: IRecruiterProfile = getUserProfileFromLocalStorage();
   return (
     <>
       <MenuItem
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
         to="/dashboard"
       />
-      <MenuItem
-        title={intl.formatMessage({ id: "MENU.RECRUITERLIST" })}
-        to="/recruiters"
-      />
+      {currentUser.role == UserRolesEnum.Admin && (
+        <MenuItem
+          title={intl.formatMessage({ id: "MENU.RECRUITERLIST" })}
+          to="/recruiters"
+        />
+      )}
       <MenuItem
         title={intl.formatMessage({ id: "MENU.CANDIDATELIST" })}
         to="/candidates"
