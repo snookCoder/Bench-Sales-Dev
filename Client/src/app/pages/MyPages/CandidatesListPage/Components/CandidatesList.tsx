@@ -14,6 +14,7 @@ import { ICandidateList } from "../../../../../Types/CandidatesInterface";
 import InCardSpinner from "../../../../MyComponents/Spinner/InCardSpinner";
 import CreateCandidateForm from "./CreateCandidateForm";
 import { IRecruiterList } from "../../../../../Types/RecruiterInterface";
+import { getRecruiters } from "../../../../../ApiRequests/RecruiterRequests";
 
 type Props = {
   recruiterId: string;
@@ -22,6 +23,7 @@ type Props = {
 
 const CandidatesList: React.FC<Props> = ({ recruiterId, recruiter }) => {
   const [candidates, setCandidates] = useState<ICandidateList[]>([]);
+  const [recruiters, setRecruiters] = useState<IRecruiterList[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -37,6 +39,7 @@ const CandidatesList: React.FC<Props> = ({ recruiterId, recruiter }) => {
   useEffect(() => {
     console.log("use effect");
     fetchCandidates();
+    fetchRecruiters();
   }, []);
 
   const fetchCandidates = async (page: number = 1) => {
@@ -48,6 +51,27 @@ const CandidatesList: React.FC<Props> = ({ recruiterId, recruiter }) => {
       console.log("API Response:", response.data);
       setCandidates(response.data.payload);
       setTotalPages(Math.ceil(response.data.payload.length / ITEMS_PER_PAGE));
+    } catch (err: any) {
+      console.error(
+        "Error Fetching Candidates:",
+        err.response?.status,
+        err.message
+      );
+      setError("Failed to load candidates.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRecruiters = async (page: number = 1) => {
+    setLoading(true);
+    setError(null);
+    try {
+      console.log("Fetching Candidates...");
+      const response = await getRecruiters();
+      console.log("API Response:", response);
+      setRecruiters(response.payload);
+      setTotalPages(Math.ceil(response.payload.length / ITEMS_PER_PAGE));
     } catch (err: any) {
       console.error(
         "Error Fetching Candidates:",
@@ -253,7 +277,7 @@ const CandidatesList: React.FC<Props> = ({ recruiterId, recruiter }) => {
 
       {showCreateCandidateModal && (
         <CreateCandidateForm
-          recruiters={[]}
+          recruiters={recruiters}
           show={showCreateCandidateModal}
           selectedRecruiter={recruiter}
           candidateItem={selectedCandidate}

@@ -322,7 +322,38 @@ const delete_recruiter = async (req, res) => {
   }
 }
 
+//profile api
+const profile = async(req, res) => {
+  try {
+    const role = req.refreshVerification.payload.role;
+    const id = req.refreshVerification.payload._id;
 
 
+    if (role == 'c') {
+      return response_success(res, 403, false, 'you are not authorized to access this api only recruiter can do ', null)
+    }
 
-export { recruiterDetails, recruiterLogin, refresh, uploadRecruiter, get_recruiter, update_recruiter, delete_recruiter }
+    if (role == 'r') {
+      const recruiter = await recruiterModel.findOne({ _id: id }).select('-refreshToken');
+      if (!recruiter) {
+        return response_success(res, 404, false, 'recruiter not found', null)
+      }
+      return response_success(res, 200, true, 'recruiter found', recruiter)
+    }
+
+    if(role == 'a') {
+      const recruiter = await recruiterModel.findOne({ _id: id }).select('-refreshToken');
+      if (!recruiter) {
+        return response_success(res, 404, false, 'admin not found', null)
+      }
+      return response_success(res, 200, true, 'admin found', recruiter)
+    }
+
+
+  } catch (error) {
+    return response_success(res, 500, false, 'error in catch api', error.message)
+  }
+}
+
+
+export { recruiterDetails, recruiterLogin, refresh, uploadRecruiter, get_recruiter, update_recruiter, delete_recruiter ,profile}

@@ -17,7 +17,7 @@ interface Recruiter {
 }
 
 interface CreateCandidateFormProps {
-  recruiters?: Recruiter[];
+  recruiters?: IRecruiterList[];
   selectedRecruiter?: IRecruiterList;
   candidateItem?: any | null; // Candidate item for edit mode
   show: boolean;
@@ -44,6 +44,10 @@ const CreateCandidateForm: React.FC<CreateCandidateFormProps> = ({
   show,
   handleClose,
 }) => {
+  console.log(
+    recruiters,
+    candidateItem?.recruiterDetails?.[0]?.recruiterId?._id
+  );
   const [loading, setLoading] = useState(false);
   const [resumePreview, setResumePreview] = useState<string | null>(null);
 
@@ -54,7 +58,10 @@ const CreateCandidateForm: React.FC<CreateCandidateFormProps> = ({
         lastName: candidateItem.lastName,
         email: candidateItem.email,
         phoneNumber: candidateItem.phoneNumber,
-        recruiterId: candidateItem.recruiterId || selectedRecruiter?._id || "",
+        recruiterId:
+          selectedRecruiter?._id ||
+          candidateItem?.recruiterDetails?.[0]?.recruiterId?._id ||
+          "",
         resume: candidateItem?.resumeUpload, // Existing resume will be shown via `resumePreview`
       });
 
@@ -136,12 +143,21 @@ const CreateCandidateForm: React.FC<CreateCandidateFormProps> = ({
       lastName: "",
       email: "",
       phoneNumber: "",
-      recruiterId: selectedRecruiter ? selectedRecruiter._id : "",
+      recruiterId:
+        selectedRecruiter?._id ||
+        candidateItem?.recruiterDetails?.[0]?.recruiterId?._id ||
+        "",
       resume: null,
     },
     validationSchema: CandidateSchema,
-    onSubmit: (values) =>
-      candidateItem ? updateCandidate(values) : submitCandidate(values),
+    onSubmit: (values) => {
+      const recruiterId = selectedRecruiter?._id || values.recruiterId;
+      if (candidateItem) {
+        updateCandidate({ ...values, recruiterId });
+      } else {
+        submitCandidate({ ...values, recruiterId });
+      }
+    },
   });
 
   const handleCloseModal = () => {
@@ -150,10 +166,13 @@ const CreateCandidateForm: React.FC<CreateCandidateFormProps> = ({
     handleClose();
   };
 
-  const recruiterOptions = recruiters.map((rec) => ({
-    value: rec.id,
-    label: rec.name,
-  }));
+  const recruiterOptions =
+    recruiters.length > 0
+      ? recruiters.map((rec) => ({
+          value: rec._id,
+          label: rec.firstName + " " + rec.lastName,
+        }))
+      : [];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
@@ -254,17 +273,15 @@ const CreateCandidateForm: React.FC<CreateCandidateFormProps> = ({
             </div>
 
             {/* Recruiter Selection */}
+            {/* Recruiter Selection */}
             <div className="col-md-6">
               <label className="form-label">Recruiter</label>
+
               {selectedRecruiter ? (
                 <input
                   type="text"
                   className="form-control"
-                  value={
-                    selectedRecruiter.firstName +
-                    " " +
-                    selectedRecruiter.lastName
-                  }
+                  value={`${selectedRecruiter.firstName} ${selectedRecruiter.lastName}`}
                   disabled
                 />
               ) : (
@@ -281,9 +298,11 @@ const CreateCandidateForm: React.FC<CreateCandidateFormProps> = ({
                   )}
                 />
               )}
-              {formik.touched.recruiterId && formik.errors.recruiterId && (
-                <div className="text-danger">{formik.errors.recruiterId}</div>
-              )}
+
+              {formik.touched.recruiterId &&
+                typeof formik.errors.recruiterId === "string" && (
+                  <div className="text-danger">{formik.errors.recruiterId}</div>
+                )}
             </div>
 
             {/* Resume Upload */}

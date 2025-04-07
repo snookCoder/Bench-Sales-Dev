@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Modal } from "react-bootstrap";
@@ -6,6 +6,12 @@ import clsx from "clsx";
 import { KTIcon } from "../../../../../../_metronic/helpers";
 import Select from "react-select";
 import { scheduleInterview } from "../../../../../../ApiRequests/InterviewRequests";
+import { getCandidates } from "../../../../../../ApiRequests/CandidateRequest";
+import {
+  ICandidateList,
+  ICandidateListResponse,
+} from "../../../../../../Types/CandidatesInterface";
+import axios from "axios";
 
 interface Candidate {
   id: string;
@@ -13,13 +19,14 @@ interface Candidate {
 }
 
 interface ScheduleInterviewFormProps {
-  candidates: Candidate[];
+  candidates?: Candidate[];
   show: boolean;
   handleClose: (isCreated?: boolean) => void;
 }
 
 const InterviewSchema = Yup.object().shape({
-  candidate: Yup.string().required("Candidate is required"),
+  candidateId: Yup.string().required("Candidate is required"),
+  jobId: Yup.string().required("Applied job is required"),
   companyName: Yup.string().required("Company name is required"),
   role: Yup.string().required("Role is required"),
   interviewDate: Yup.date().required("Interview date is required"),
@@ -33,15 +40,73 @@ const InterviewSchema = Yup.object().shape({
 });
 
 const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
-  candidates,
+  // candidates,
   show,
   handleClose,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [candidates, setCandidates] = useState<any>([]);
+  const [jobs, setJobs] = useState<any>([]);
+
+  const getJobPlacements = async (candidateId: string) => {
+    // Example API call: adjust based on your actual endpoint
+    return await axios.get(`/api/jobs?candidateId=${candidateId}`);
+  };
+
+  const fetchJobsForCandidate = async (candidateId: string) => {
+    try {
+      const jobsResponse = await getJobPlacements(candidateId);
+      const jobsData = jobsResponse.data.payload;
+
+      const jobOptions = jobsData.map((job: any) => ({
+        value: job._id,
+        label: job.title,
+      }));
+
+      setJobs(jobOptions);
+
+      // Reset selected job
+      formik.setFieldValue("jobId", jobOptions[0]?.value || "");
+    } catch (err) {
+      console.error("Error fetching jobs:", err);
+      setJobs([]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const candidatesResponse = await getCandidates();
+        const candidatesData: ICandidateList[] =
+          candidatesResponse.data.payload;
+
+        const candidateOptions = candidatesData.map((cand) => ({
+          value: cand._id,
+          label: `${cand.firstName} ${cand.lastName}`,
+        }));
+
+        setCandidates(candidateOptions);
+
+        const firstCandidateId = candidateOptions[0]?.value;
+        if (firstCandidateId) {
+          await fetchJobsForCandidate(firstCandidateId);
+          formik.setFieldValue("candidateId", firstCandidateId);
+        }
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
-      candidate: "",
+      candidateId: "",
+      jobId: "",
       companyName: "",
       role: "",
       interviewDate: "",
@@ -50,20 +115,22 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
       notes: "",
     },
     validationSchema: InterviewSchema,
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
-      setLoading(true);
+    onSubmit: async (values) => {
+      setSubmitting(true);
       try {
-        // 🟢 API Call for Scheduling Interview
-        const response = await scheduleInterview(values);
+        const request = {
+          candidateId: values.candidateId,
+          jobId: values.jobId,
+          interviewDate: values.interviewDate,
+          feedback: values.notes,
+        };
+        const response = await scheduleInterview(request);
         console.log("Scheduled Interview:", response);
-
-        resetForm();
-        handleClose(true); // Indicating that an interview was created
+        handleClose(true);
       } catch (error) {
         console.error("Error scheduling interview:", error);
         formik.setStatus("Failed to schedule interview.");
       } finally {
-        setLoading(false);
         setSubmitting(false);
       }
     },
@@ -74,7 +141,7 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
     handleClose();
   };
 
-  const candidateOptions = candidates.map((cand) => ({
+  const candidateOptions = candidates.map((cand: any) => ({
     value: cand.id,
     label: cand.name,
   }));
@@ -113,17 +180,41 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
               <Select
                 className="react-select-styled react-select-solid"
                 classNamePrefix="react-select"
-                options={candidateOptions}
+                options={candidates}
                 placeholder="Select Candidate"
-                onChange={(option: any) =>
-                  formik.setFieldValue("candidate", option?.value)
-                }
-                value={candidateOptions.find(
-                  (option) => option.value === formik.values.candidate
+                onChange={async (option) => {
+                  formik.setFieldValue("candidateId", option?.value);
+                  if (option?.value) {
+                    await fetchJobsForCandidate(option.value);
+                  }
+                }}
+                value={candidates.find(
+                  (option: any) => option.value === formik.values.candidateId
                 )}
               />
-              {formik.touched.candidate && formik.errors.candidate && (
-                <div className="text-danger">{formik.errors.candidate}</div>
+
+              {formik.touched.candidateId && formik.errors.candidateId && (
+                <div className="text-danger">{formik.errors.candidateId}</div>
+              )}
+            </div>
+
+            {/* Job Dropdown */}
+            <div className="col-md-6">
+              <label className="form-label">Applied jobs</label>
+              <Select
+                className="react-select-styled react-select-solid"
+                classNamePrefix="react-select"
+                options={jobs}
+                placeholder="Select Job"
+                onChange={(option) =>
+                  formik.setFieldValue("jobId", option?.value)
+                }
+                value={jobs.find(
+                  (option: any) => option.value === formik.values.jobId
+                )}
+              />
+              {formik.touched.jobId && formik.errors.jobId && (
+                <div className="text-danger">{formik.errors.jobId}</div>
               )}
             </div>
 
@@ -217,7 +308,7 @@ const ScheduleInterviewForm: React.FC<ScheduleInterviewFormProps> = ({
             <button
               type="submit"
               className="btn btn-primary btn-sm mt-4"
-              disabled={formik.isSubmitting || !formik.isValid}
+              disabled={formik.isSubmitting}
             >
               {!loading && (
                 <span className="indicator-label">Schedule Interview</span>

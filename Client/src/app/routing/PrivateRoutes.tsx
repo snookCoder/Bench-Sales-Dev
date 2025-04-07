@@ -11,6 +11,8 @@ import { RecruiterListPageWrapper } from "../pages/MyPages/RecruitersListPage/Re
 import RecruiterProfilePage from "../pages/MyPages/RecruitersProfilePage/RecruitersProfilePage";
 import { CandidateListPageWrapper } from "../pages/MyPages/CandidatesListPage/CandidatesListPageWrapper";
 import CandidateProfilePage from "../pages/MyPages/CandidateProfilePage/CandidateProfilePage";
+import { AppliedJobsListPageWrapper } from "../pages/MyPages/AppliedJobsPage/AppliedJobsListPageWrapper";
+import { InterviewListPageWrapper } from "../pages/MyPages/InterviewsListPage/InterviewsListPageWrapper";
 // import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 
 const PrivateRoutes = () => {
@@ -33,10 +35,20 @@ const PrivateRoutes = () => {
         {/* <Route path="dashboard" element={<DashboardWrapper />} /> */}
         <Route path="recruiters" element={<RecruiterListPageWrapper />} />
         {/* <Route path="recruiter-profile" element={<Navigate to="/recruiter-profile/:id/candidates" />} /> */}
-        <Route path="recruiter-profile/:id/*" element={<RecruiterProfilePage />} />
+        <Route
+          path="recruiter-profile/:id/*"
+          element={<RecruiterProfilePage />}
+        />
 
         <Route path="candidates" element={<CandidateListPageWrapper />} />
-        <Route path="candidate-profile/:id/*" element={<CandidateProfilePage />} />
+        <Route
+          path="candidate-profile/:id/*"
+          element={<CandidateProfilePage />}
+        />
+
+        <Route path="applied-jobs" element={<AppliedJobsListPageWrapper isProfilePage={false}/>} />
+        <Route path="interviews" element={<InterviewListPageWrapper isProfilePage={false}/>} />
+        {/* <Route path="applied-jobs/:id/*" element={<CandidateProfilePage />} /> */}
 
         {/* <Route path='dashboard' element={<DashboardWrapper />} /> */}
         <Route path="builder" element={<BuilderPageWrapper />} />
